@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+        <title>选课系统</title>
+        
+
+        <link rel="stylesheet" href="./js/libs/jquery-ui/css/jquery-ui.css">
+        <link rel="stylesheet" href="./js/libs/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="./js/libs/tokenfield/css/bootstrap-tokenfield.css">
+        <link rel="stylesheet" href="./js/libs/tokenfield/css/tokenfield-typeahead.css">
+        <link rel="stylesheet" href="./js/libs/bootstrap-table/bootstrap-table.css">
+        <link rel="stylesheet" href="./js/libs/bootstrap-table/bootstrap-editable.css">
+        <link rel="stylesheet" href="./css/xk.css">
+    
+        <script data-main="./js/main" src="./js/libs/require.js"></script>
+
+    </head>
+    <body>
+
+        
+    </body>
+    <!-- 模板 -->
+
+    <!-- 登录 -->
+    <script type="text/template" id="login-template">
+        <div>
+            <form>
+                <div class="form-group user-role">
+                    <label for="role">角色</label>
+                    <select class="form-control" name="role">
+                        <option value="teacher">教师</option>
+                        <option value="student">学生</option>
+                        <option value="manager">教务员</option>
+                    </select>
+                </div>
+                <div class="form-group user-id">
+                    <label for="username">工号</label>
+                    <input type="text" class="form-control"  />
+                </div>
+                <div class="form-group user-password">
+                    <label for="password">密码</label>
+                    <input type="password" class="form-control" id="password"  />
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">登录</button>
+            </form>
+        </div>
+    </script>
+
+    <!-- app view -->
+    <script type="text/template" id="appview-template">
+        <div class="login-container" style="display: none;"></div>
+        <div class="app-container" style="display: none;">
+            <div class="app-header">
+                <div class="user-header">
+                    <strong>角色：</strong><span class="user-role"></span>
+                    <strong>用户名：</strong><span class="user-name"></span>
+                </div>
+                <div class="btn logout-btn btn-warning">登出</div>
+            </div>
+            <div class="containers" role="teacher">
+            </div>
+            <div class="containers" role="student">
+            </div>
+            <div class="containers" role="manager">
+            </div>
+        </div>
+        <div class="body-loading-box">
+            <div class="body-loading">
+                加载中...
+                <!-- <div class="circle"></div> -->
+            </div>
+        </div>
+    </script>
+
+    <!-- teacher -->
+    <script type="text/template" id="teacher-template">
+        <div class="teacher-page">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation">
+                        <a href="#teacher_profile" aria-controls="teacher_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#createcourse" aria-controls="createcourse" role="tab" data-toggle="tab" act="profile">开设课程</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#getteachercourse" aria-controls="getteachercourse" role="tab" data-toggle="tab" act="getteachercourse">查看选课名单</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane" id="teacher_profile">
+                        <div class="profile-container">
+                            <form>
+                                <div class="form-group user-name">
+                                    <label for="name">姓名</label>
+                                    <input type="text" class="form-control"  />
+                                </div>
+
+                                <div class="form-group user-gender">
+                                    <label for="gender">性别</label>
+                                    <select class="form-control" name="gender">
+                                        <option value="m">男</option>
+                                        <option value="f">女</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary save-btn">提交</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="createcourse">
+                        <div class="profile-container">
+                            <form>
+                                <div class="form-group course-name">
+                                    <label for="name">课程名称</label>
+                                    <input type="text" class="form-control" />
+                                </div>
+                                <div class="form-group course-size">
+                                    <label for="size">选课人数上限</label>
+                                    <input type="number" class="form-control" />
+                                </div>
+                                <div class="form-group course-credit">
+                                    <label for="credit">学分</label>
+                                    <input type="number" class="form-control" />
+                                </div>
+                                <div class="form-group course-period">
+                                    <label for="period">学时</label>
+                                    <input type="number" class="form-control" />
+                                </div>
+                                <div class="form-group course-time">
+                                    <label for="period">上课时间</label>
+                                    <div class="course-time-picker">
+                                        <div class="weekday">
+                                            <label for="weekday">星期</label>
+                                            <select class="form-control" name="weekday">
+                                                <option value="A">一</option>
+                                                <option value="B">二</option>
+                                                <option value="C">三</option>
+                                                <option value="D">四</option>
+                                                <option value="E">五</option>
+                                            </select>
+                                        </div>
+                                        <div class="section">
+                                            <label for="section">节次</label>
+                                            <select class="form-control" name="section">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group course-restriction-grade">
+                                    <label for="restriction-grade">年级限制</label>
+                                    <input type="text" class="form-control restriction-grade" value="" />
+                                </div>
+                                <div class="form-group course-restriction-major">
+                                    <label for="restriction-major">专业限制</label>
+                                    <input type="text" class="form-control restriction-major" value="" />
+                                </div>
+
+                                <button type="submit" class="btn btn-primary apply-btn">申请</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="getteachercourse">
+                        <table class="course-members-table" data-search="true"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- student -->
+    <script type="text/template" id="student-template">
+        <div class="student-page">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation">
+                        <a href="#student_profile" aria-controls="student_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#choosecourse" aria-controls="choosecourse" role="tab" data-toggle="tab" act="choosecourse">选课</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab" act="schedule">课程表</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane" id="student_profile">
+                        <div class="profile-container">
+                            <form>
+                                <div class="form-group user-name">
+                                    <label for="name">姓名</label>
+                                    <input type="text" class="form-control"  />
+                                </div>
+
+                                <div class="form-group user-gender">
+                                    <label for="gender">性别</label>
+                                    <select class="form-control" name="gender">
+                                        <option value="m">男</option>
+                                        <option value="f">女</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group user-grade">
+                                    <label for="grade">年级</label>
+                                    <select class="form-control" name="grade">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary save-btn">提交</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="choosecourse">
+                        <table class="course-choose-table"></table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="schedule">
+                        <table class="stucourse-schedule"></table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </script>
+
+    <!-- manager -->
+    <script type="text/template" id="manager-template">
+        <div class="manager-page">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation">
+                        <a href="#commitcourse" aria-controls="commitcourse" role="tab" data-toggle="tab" act="commitcourse">审批课程</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#modifycourse" aria-controls="modifycourse" role="tab" data-toggle="tab" act="modifycourse">修改课程</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#getallcourse" aria-controls="getallcourse" role="tab" data-toggle="tab" act="getallcourse">查看课程详情</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#getallstucourse" aria-controls="getallstucourse" role="tab" data-toggle="tab" act="getallstucourse">查看选课详情</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane" id="commitcourse">
+                        <table class="course-commit-table" data-search="true"></table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="modifycourse">
+                        <table class="course-modify-table" data-search="true"></table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="getallcourse">
+                        <table class="course-all-table" data-search="true"></table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="getallstucourse">
+                        <table class="stucourse-all-table" data-search="true"></table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </script>
+</html>
+
+
