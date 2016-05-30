@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog name="root">
+	<catalog name="csms">
+		<catalog name="teacher">
+		
+			<service 
+				id="IdCheck" 
+				name="IdCheck" 
+				note="检查教师工号是否有效"
+				visible="protected" 
+				log="none" 
+				module="com.alogic.idu.service.IdExist">
+				<properties>
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="data.root" value="id" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="false" />
+					<parameter id="privilege" value="view_csms" />
+					<parameter id="sql.IdExist"
+						value="
+		                    SELECT 
+		                    	count(teacher_no) 
+		                    FROM 
+		                    	teacher 
+		                    WHERE 
+		                    	teacher_no =?
+	                " />
+				</properties>
+			</service>
+		
+			<service 
+				id="New" 
+				name="New" 
+				note="新增教师" 
+				visible="protected"
+				log="none" 
+				module="com.alogic.idu.service.NewById">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="true" />
+					<parameter id="log.type" value="Teacher" />
+					<parameter id="log.content" value="新增教师${id}" />
+					<parameter id="data.root" value="teacher" />
+					<parameter id="privilege" value="manager_csms" />
+					<parameter id="cache.id" value="teachers" />
+					<parameter id="sql.Insert"
+						value="
+	                    	INSERT INTO
+	                    		teacher
+	                        		(
+	                        		teacher_no 
+		                         	#{not_nvl(name,',teacher_name')} 
+		                         	#{not_nvl(password,',teacher_password')} 
+		                         	,create_date 
+		                         	,update_date
+	                        		) 
+	                    		values 
+	                        		(
+	                        		#{bind('id')} 
+		                            #{not_nvl(name,',' + bind('name'))} 
+		                            #{not_nvl(password,',' + bind('password'))} 
+		                            ,now() 
+		                            ,now()
+	                            	)
+					 	" />
+				</properties>
+			</service>
+		
+			<service 
+				id="ById" 
+				name="ById" 
+				note="通过教师ID查询教师个人信息" 
+				visible="protected"
+				log="none" 
+				module="com.alogic.idu.service.QueryById">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="false" />
+					<parameter id="log.type" value="Teacher" />
+					<parameter id="log.content" value="查询教师${id}个人信息" />
+					<parameter id="data.root" value="teacher" />
+					<parameter id="privilege" value="view_csms" />
+					<parameter id="cache.id" value="teachers" />
+				</properties>
+			</service>
+			
+			<service 
+				id="Update" 
+				name="Update" 
+				note="更新教师个人信息" 
+				visible="protected"
+				log="brief" 
+				module="com.alogic.idu.service.UpdateById">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="true" />
+					<parameter id="log.type" value="Teacher" />
+					<parameter id="log.content" value="更新教师${id}个人信息" />
+					<parameter id="data.root" value="teacher" />
+					<parameter id="privilege" value="manager_csms" />
+					<parameter id="cache.id" value="teachers" />
+					<parameter id="sql.Update"
+					value="
+						UPDATE 
+						   teacher 
+						SET 
+						   update_date = now() 
+						   #{not_nvl(name,', teacher_name='+bind('name'))} 
+						   #{not_nvl(password,', teacher_password='+bind('password'))} 
+						WHERE 
+						   teacher_no = #{bind('id')}
+                    " />
+				</properties>
+			</service>
+			
+			<service 
+				id="Delete" 
+				name="Delete" 
+				note="删除教师"
+				visible="protected" 
+				log="brief" 
+				module="com.alogic.idu.service.UpdateById">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="true" />
+					<parameter id="log.type" value="Teacher" />
+					<parameter id="log.content" value="删除教师${id}" />
+					<parameter id="data.root" value="teacher" />
+					<parameter id="privilege" value="manager_post" />
+					<parameter id="cache.id" value="teachers" />
+					<parameter id="sql.Update"
+						value="
+		                     DELETE 
+		                     FROM 
+		                         teacher 
+		                     WHERE 
+		                         teacher_no = #{bind('id')}
+						" />
+				</properties>
+			</service>
+			
+			<service 
+				id="StudentList" 
+				name="StudentList" 
+				note="教师查看选课学生列表" 
+				visible="protected" 
+				log="none" 
+				module="edu.fdu.csms.service.teacher.ListStudentByCourse">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="false" />
+					<parameter id="data.root" value="student" />
+					<parameter id="privilege" value="view_csms" />
+					<parameter id="cache.id" value="students" />
+				</properties>
+			</service>
+			
+			<service 
+				id="RecordCourseGrade" 
+				name="RecordCourseGrade" 
+				note="提交成绩" 
+				visible="protected" 
+				log="brief" 
+				module="com.alogic.idu.service.UpdateById">
+				<properties>
+					<parameter id="jsonDefault" value="true" />
+					<parameter id="servant.maxActive" value="10" />
+					<parameter id="servant.maxIdle" value="1" />
+					<parameter id="dbSource" value="csms" />
+					<parameter id="log.on" value="true" />
+					<parameter id="log.type" value="StudentCourse" />
+					<parameter id="log.content" value="提交成绩" />
+					<parameter id="data.root" value="studentCourse" />
+					<parameter id="privilege" value="manager_csms" />
+					<parameter id="cache.id" value="studentcourses" />
+					<parameter id="sql.Update"
+					value="
+						UPDATE 
+						   student_course_list 
+						SET 
+						   update_date = now() 
+						   ,course_grade = #{bind('grade')}
+						WHERE 
+						   student_course_id = #{bind('id')}
+                    " />
+				</properties>
+			</service>
+			
+		</catalog>
+	</catalog>
+</catalog>
