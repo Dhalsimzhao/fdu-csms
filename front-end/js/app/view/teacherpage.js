@@ -8,7 +8,8 @@ define(function(require, exports, module) {
     var tokenfield = require('tokenfield');
     var bstable = require('bs-table-zh');
     var api = require('api');
-    var appView = require('view/appview');  
+    var appView = require('view/appview'); 
+    var appRouter = require('router/approuter');
 
     var TeacherPage = Backbone.View.extend({
         template: _.template($('#teacher-template').html()),
@@ -29,7 +30,7 @@ define(function(require, exports, module) {
                             self.getProfile();
                             break;
                         case 'createcourse':
-                            self.createCourse();
+                            self.showCreateCourse();
                             break;
                         case 'getteachercourse':
                             self.getTeacherCourse();
@@ -41,34 +42,24 @@ define(function(require, exports, module) {
             }
         },
 
+        events: function () {
+            return {
+                'click .change-pwd': function(){
+                    appRouter.goto('changepwd');
+                },
+                'click .apply-btn': this.createCourse,
+            }
+        },
+
         show: function() {
             this.render();
-            this._initPlugins();
             $('.login-container').hide();
+            $('.changepwd-container').hide();
             $('.app-container').show();
             appView.setHeader();
             $('.containers[role]').hide();
             $('.containers[role=teacher]').show();
             this.$('a[data-toggle="tab"]').eq(0).click();
-        },
-
-        _initPlugins() {
-            var self = this;
-            // init field tokens
-            this.$('.restriction-grade').tokenfield({
-              autocomplete: {
-                source: enums.grade_string,
-                delay: 100
-              },
-              showAutocompleteOnFocus: true
-            });
-            this.$('.restriction-major').tokenfield({
-              autocomplete: {
-                source: enums.major,
-                delay: 100
-              },
-              showAutocompleteOnFocus: true
-            });
         },
 
         _initTeacherCourse(json) {
@@ -120,7 +111,7 @@ define(function(require, exports, module) {
                                 data = datas[index];
 
                             // console.log(data);
-
+                            console.log(data);
                             self.submitScore(data);
                         }
                     },
@@ -155,8 +146,65 @@ define(function(require, exports, module) {
             this.$('.user-gender select').val(json.gender.toLowerCase());
         },
 
-        createCourse: function () {
-            
+        showCreateCourse: function () {
+            var self = this;
+            // init field tokens
+            if (!this._initedTokenField) {
+                this.$('.restriction-grade').tokenfield({
+                  autocomplete: {
+                    source: enums.grade_string,
+                    delay: 100
+                  },
+                  showAutocompleteOnFocus: true
+                });
+                this.$('.restriction-grade').on('tokenfield:createtoken', function (event) {
+                    var existingTokens = $(this).tokenfield('getTokens');
+                    $.each(existingTokens, function(index, token) {
+                        if (token.value === event.attrs.value)
+                            event.preventDefault();
+                    });
+                });
+                this.$('.restriction-major').tokenfield({
+                  autocomplete: {
+                    source: enums.major,
+                    delay: 100
+                  },
+                  showAutocompleteOnFocus: true
+                });
+                this.$('.restriction-major').on('tokenfield:createtoken', function (event) {
+                    var existingTokens = $(this).tokenfield('getTokens');
+                    $.each(existingTokens, function(index, token) {
+                        if (token.value === event.attrs.value)
+                            event.preventDefault();
+                    });
+                });
+                this._initedTokenField = true;
+            } else {
+                this.$('.restriction-grade').tokenfield('setTokens', []);
+                this.$('.restriction-major').tokenfield('setTokens', []);
+            }
+        },
+
+        createCourse: function (e) {
+            e.preventDefault();
+            var restrictionGrades = this.$('.restriction-grade').tokenfield('getTokens');
+            var restrictionMajors = this.$('.restriction-major').tokenfield('getTokens');
+
+            var data = {
+                teacherNo: xk.id,
+                courseName: this.$('.course-name input').val(),
+                courseSize: this.$('.course-size input').val(),
+                courseCredits: this.$('.course-credit input').val(),
+                coursePeriod: this.$('.course-period input').val(),
+                applyTime: ['A3', 'D4'], // todo~~
+                courseRestrictionGrade: _.pluck(restrictionGrades, 'value'),
+                courseRestrictionMajor: _.pluck(restrictionMajors, 'value')
+            };
+
+            console.log(data);
+            api.createCourse(data).then(function () {
+                alert('提交成功');
+            });
         },
 
         submitScore: function(data) {

@@ -53,6 +53,7 @@ define(function(require, exports, module) {
     var appRouter = require('router/approuter');
     var checkRoleRouter = require('router/checkrole-router');
     var loginRouter = require('router/login-router');
+    var changepwdRouter = require('router/changepwd-router');
     var teacherRouter = require('router/teacher-router');
     var studentRouter = require('router/student-router');
     var managerRouter = require('router/manager-router');
@@ -61,6 +62,7 @@ define(function(require, exports, module) {
 
     appRouter.addRoutes(checkRoleRouter);
     appRouter.addRoutes(loginRouter);
+    appRouter.addRoutes(changepwdRouter);
     appRouter.addRoutes(teacherRouter);
     appRouter.addRoutes(studentRouter);
     appRouter.addRoutes(managerRouter);

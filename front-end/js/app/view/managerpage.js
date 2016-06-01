@@ -47,6 +47,7 @@ define(function(require, exports, module) {
             this.render();
             this._initPlugins();
             $('.login-container').hide();
+            $('.changepwd-container').hide();
             $('.app-container').show();
             appView.setHeader();
             $('.containers[role]').hide();

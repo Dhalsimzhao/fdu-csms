@@ -19,6 +19,11 @@ define(function(require, exports, module) {
             'Software',
             'Medical Science'
         ],
+        roleMap: {
+            teacher: "教师",
+            student: "学生",
+            manager: "教务员",
+        },
         genderMap: {
             'M': '男',
             'F': '女'

@@ -3,7 +3,8 @@ define(function(require, exports, module) {
     var xk = {
         isLogin: false,
         role: '',
-        name: '费曼先生'
+        name: '费曼先生',
+        id: '10001',
     };
 
     // var xk = {

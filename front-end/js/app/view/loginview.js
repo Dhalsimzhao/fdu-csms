@@ -25,6 +25,7 @@ define(function(require, exports, module) {
             this.render();
             $('.app-container').hide();
             $('.login-container').show();
+            $('.changepwd-container').hide();
         },
 
         events: function() {
@@ -46,7 +47,20 @@ define(function(require, exports, module) {
 
         _login: function (e) {
             e.preventDefault();
-            api.login().then(function(data){
+            var role = this.$('.user-role select').val(),
+                loginId = this.$('.user-id input').val(),
+                pwd = this.$('.user-password input').val(),
+                loginCode= this.$('.login-captcha input').val();
+
+            var data = {
+                loginId: loginId,
+                pwd: pwd,
+                loginCode: loginCode,
+                role: role
+            };
+            
+            console.log(data);
+            api.login(data).then(function(data){
                 xk.isLogin = true;
                 xk.role = data.role;
                 appRouter.goto(xk.role);

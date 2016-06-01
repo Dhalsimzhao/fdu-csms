@@ -52,6 +52,7 @@ define(function(require, exports, module) {
         show: function() {
             this.render();
             $('.login-container').hide();
+            $('.changepwd-container').hide();
             $('.app-container').show();
             appView.setHeader();
             $('.containers[role]').hide();
@@ -60,8 +61,22 @@ define(function(require, exports, module) {
         },
 
         submitProfile: function () {
-            var data = {};
-            api.submitProfile().then(function () {
+            // 只有manager可以修改信息
+            // student
+            var data = {
+                id: 10002,
+                name: 'tom',
+                gender: 'M',
+                grade: 1,
+                major: 'test'
+            };
+
+            // teacher manager
+            var data = {
+                id: 10001,
+                name: 'mary'
+            };
+            api.submitProfile(data).then(function () {
                 alert('提交成功');
             });
         },

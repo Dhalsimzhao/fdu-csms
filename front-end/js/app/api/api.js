@@ -1,6 +1,7 @@
 define(function(require, exports, module){
     var debug = true;
     var $ = require('jquery');
+    var xk = require('biz/xk');
 
     $.ajaxSetup({
         beforeSend: function(){
@@ -19,8 +20,17 @@ define(function(require, exports, module){
     //     $('.body-loading-box').hide();
     // });
     
+    function checkResponse(json) {
+        var res;
+        if(json.code === 'core.ok') {
+            res = true;
+        } else {
+            res = false;
+        }
+    }
+
     function API () {
-        this._urlprefix = '/';
+        this._urlprefix = '/services/csms';
     }
 
     API.prototype.fake = function(fakeData) {
@@ -43,9 +53,15 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
 
-            var url = '/getRole';
-            $.get(url, function(data){
-                def.resolve(data);
+            var url = this.this._urlprefix + '/login/Current';
+            $.get(url, function(json){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json.user);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -62,9 +78,15 @@ define(function(require, exports, module){
             });
         } else {
             var def = $.Deferred();
-            var url = '/login';
-            $.post(url, data, function(data){
-                def.resolve(data);
+            var url = this._urlprefix + '/login/Login';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -78,9 +100,37 @@ define(function(require, exports, module){
             return this.fake({});
         } else {
             var def = $.Deferred();
-            var url = '/logout';
-            $.post(url, data, function(data){
-                def.resolve(data);
+            var url = this._urlprefix + '/login/Logout';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
+            }, function(err){
+                def.reject(err);
+            });
+
+            return def.promise();
+        } 
+    }
+
+    API.prototype.changepwd = function(data) {
+        if (debug) {
+            return this.fake({});
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/login/ChangePwd';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -98,9 +148,15 @@ define(function(require, exports, module){
             });
         } else {
             var def = $.Deferred();
-            var url = '/submitprofile';
-            $.post(url, data, function(data){
-                def.resolve(data);
+            var url = this._urlprefix + '/' + xk.role + '/Byid';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -114,9 +170,15 @@ define(function(require, exports, module){
             return this.fake({});
         } else {
             var def = $.Deferred();
-            var url = '/submitprofile';
-            $.post(url, data, function(data){
-                def.resolve(data);
+            var url = this._urlprefix + '/' + xk.role + '/Update';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -133,9 +195,15 @@ define(function(require, exports, module){
             });
         } else {
             var def = $.Deferred();
-            var url = '/course';
-            $.post(url, data, function(data){
-                def.resolve(data);
+            var url = this._urlprefix + '/course/New';
+            $.get(url, data, function(data){
+                var res = checkResponse(json);
+                if (res) {
+                    def.resolve(json.course);
+                } else {
+                    alert(json.reason);
+                    def.reject();
+                }
             }, function(err){
                 def.reject(err);
             });
@@ -151,8 +219,8 @@ define(function(require, exports, module){
             });
         } else {
             var def = $.Deferred();
-            var url = '/submitscore';
-            $.post(url, data, function(data){
+            var url = this._urlprefix + '/teacher/RecordCourseGrade';
+            $.get(url, data, function(data){
                 def.resolve(data);
             }, function(err){
                 def.reject(err);
@@ -166,29 +234,44 @@ define(function(require, exports, module){
         if (debug) {
             return this.fake({
                 data: [
+                    // {
+                    //     course_id: 'id1',
+                    //     course_name: '课程名称1',
+                    //     stu_no: '062458',
+                    //     stu_name: '陈博',
+                    //     stu_gender: 'M',
+                    //     stu_grade: 2,
+                    //     stu_major: 'major_XY',
+                    // },
+                    // {
+                    //     course_id: 'id2',
+                    //     course_name: '课程名称2',
+                    //     stu_no: '062500',
+                    //     stu_name: '陈博雅',
+                    //     stu_gender: 'F',
+                    //     stu_grade: 2,
+                    //     stu_major: 'major_XX',
+                    // },
+
                     {
-                        course_id: 'id1',
-                        course_name: '课程名称1',
-                        stu_no: '062458',
-                        stu_name: '陈博',
-                        stu_gender: 'M',
-                        stu_grade: 2,
-                        stu_major: 'major_XY',
+                        "studentNo": "2012002002",
+                        "studentGrade": "4",
+                        "studentGender": "M",
+                        "studentMajor": "Foreign Language and Literature",
+                        "studentName": "Adam Rippion"
                     },
                     {
-                        course_id: 'id2',
-                        course_name: '课程名称2',
-                        stu_no: '062500',
-                        stu_name: '陈博雅',
-                        stu_gender: 'F',
-                        stu_grade: 2,
-                        stu_major: 'major_XX',
-                    },
+                        "studentNo": "2013001004",
+                        "studentGrade": "3",
+                        "studentGender": "M",
+                        "studentMajor": "Chinese Language and Literature",
+                        "studentName": "Joushua Farris"
+                    }
                 ]
             });
         } else {
             var def = $.Deferred();
-            var url = '/teachercourse';
+            var url = '/teacher/StudentList';
             $.get(url, function(data){
                 def.resolve(data);
             }, function(err){
@@ -243,7 +326,15 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = '/choosecourse';
-            $.post(url, data, function(data){
+
+            var data = {
+                name: '陈博',
+                gender: 'F',
+                grade: function () {
+                    return xxx.grade;
+                }
+            }
+            $.get(url, data, function(data){
                 def.resolve(data);
             }, function(err){
                 def.reject(err);
@@ -261,7 +352,7 @@ define(function(require, exports, module){
        } else {
            var def = $.Deferred();
            var url = '/canclecourse';
-           $.post(url, data, function(data){
+           $.get(url, data, function(data){
                def.resolve(data);
            }, function(err){
                def.reject(err);
@@ -511,7 +602,7 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = '/login';
-            $.post(url, data, function(data){
+            $.get(url, data, function(data){
                 def.resolve(data);
             }, function(err){
                 def.reject(err);

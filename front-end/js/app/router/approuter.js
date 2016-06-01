@@ -9,21 +9,22 @@ define(function(require, exports, module) {
         execute: function(callback, args, name) {
             // console.log('router execute');
             if (!xk.role) {
+                var self = this;
                 this.getRole().then(function(data){
                     // data = {role: '' || 'teacher' || 'student' || 'manager' };
-                    if (!data.role) {
+                    if (!data.isLogin) {
                         goToLogin();
-                        if (callback) callback.apply(this, args);
+                        if (callback) callback.apply(self, args);
                     } else {
-                        if (callback) callback.apply(this, args);
+                        xk.role = data.loginType;
+                        if (callback) callback.apply(self, args);
                     }
                 }, function(err){
                     console.log(err);
                 });
             } else {
-                if (callback) callback.apply(this, args);
+                if (callback) callback.apply(self, args);
             }
-            // args.push(parseQueryString(args.pop()));
         },
 
         addRoutes: function(obj){

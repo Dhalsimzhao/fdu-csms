@@ -23,35 +23,11 @@
         
     </body>
     <!-- 模板 -->
-
-    <!-- 登录 -->
-    <script type="text/template" id="login-template">
-        <div>
-            <form>
-                <div class="form-group user-role">
-                    <label for="role">角色</label>
-                    <select class="form-control" name="role">
-                        <option value="teacher">教师</option>
-                        <option value="student">学生</option>
-                        <option value="manager">教务员</option>
-                    </select>
-                </div>
-                <div class="form-group user-id">
-                    <label for="username">工号</label>
-                    <input type="text" class="form-control"  />
-                </div>
-                <div class="form-group user-password">
-                    <label for="password">密码</label>
-                    <input type="password" class="form-control" id="password"  />
-                </div>
-                <button type="submit" class="btn btn-primary login-btn">登录</button>
-            </form>
-        </div>
-    </script>
-
+    
     <!-- app view -->
     <script type="text/template" id="appview-template">
         <div class="login-container" style="display: none;"></div>
+        <div class="changepwd-container" style="display: none;"></div>
         <div class="app-container" style="display: none;">
             <div class="app-header">
                 <div class="user-header">
@@ -75,6 +51,64 @@
         </div>
     </script>
 
+    <!-- 登录 -->
+    <script type="text/template" id="login-template">
+        <div>
+            <h1 class="title">CSMS</h1>
+            <form>
+                <div class="form-group user-role">
+                    <label for="role">角色</label>
+                    <select class="form-control" name="role">
+                        <option value="teacher">教师</option>
+                        <option value="student">学生</option>
+                        <option value="manager">教务员</option>
+                    </select>
+                </div>
+                <div class="form-group user-id">
+                    <label for="username">工号</label>
+                    <input type="text" class="form-control"  />
+                </div>
+                <div class="form-group user-password">
+                    <label for="password">密码</label>
+                    <input type="password" class="form-control" id="password"  />
+                </div>
+                <div class="form-group login-captcha">
+                    <label for="captcha" style="display:block;">验证码</label>
+                    <input class="form-control" style="display:inline-block;width:130px;" />
+                    <img src="/login/LoginCode" alt="验证码" width="80px;" height="26px;">
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">登录</button>
+            </form>
+        </div>
+    </script>
+
+    <!-- 修改密码 -->
+    <script type="text/template" id="changepwd-template">
+        <div>
+            <form>
+                <div class="form-group old-password">
+                    <label for="password">原密码</label>
+                    <input type="password" class="form-control" required />
+                </div>
+                <div class="form-group new-password">
+                    <label for="password">新密码</label>
+                    <input type="password" class="form-control" required />
+                </div>
+                <div class="form-group confirm-new-password">
+                    <label for="password">确认新密码</label>
+                    <input type="password" class="form-control" required />
+                </div>
+                <div class="form-group login-captcha">
+                    <label for="captcha" style="display:block;">验证码</label>
+                    <input class="form-control" style="display:inline-block;width:130px;" required />
+                    <img src="/login/LoginCode" alt="验证码" width="80px;" height="26px;">
+                </div>
+                <button type="submit" class="btn btn-primary changepwd-btn">修改密码</button>
+                <button class="btn btn-primary cancel-btn">取消</button>
+            </form>
+        </div>
+    </script>
+
     <!-- teacher -->
     <script type="text/template" id="teacher-template">
         <div class="teacher-page">
@@ -84,7 +118,7 @@
                         <a href="#teacher_profile" aria-controls="teacher_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
                     </li>
                     <li role="presentation">
-                        <a href="#createcourse" aria-controls="createcourse" role="tab" data-toggle="tab" act="profile">开设课程</a>
+                        <a href="#createcourse" aria-controls="createcourse" role="tab" data-toggle="tab" act="createcourse">开设课程</a>
                     </li>
                     <li role="presentation">
                         <a href="#getteachercourse" aria-controls="getteachercourse" role="tab" data-toggle="tab" act="getteachercourse">查看选课名单</a>
@@ -108,8 +142,10 @@
                                         <option value="f">女</option>
                                     </select>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary save-btn">提交</button>
+                                <div class="form-group change-pwd" style="cursor: pointer;color: #428bca;">
+                                    修改密码
+                                </div>
+                                <!-- <button type="submit" class="btn btn-primary save-btn">提交</button> -->
                             </form>
                         </div>
                     </div>
@@ -172,7 +208,7 @@
                                     <input type="text" class="form-control restriction-major" value="" />
                                 </div>
 
-                                <button type="submit" class="btn btn-primary apply-btn">申请</button>
+                                <button class="btn btn-primary apply-btn">申请</button>
                             </form>
                         </div>
                     </div>
@@ -227,8 +263,10 @@
                                         <option value="4">4</option>
                                     </select>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary save-btn">提交</button>
+                                <div class="form-group change-pwd" style="cursor: pointer;color: #428bca;">
+                                    修改密码
+                                </div>
+                                <!-- <button type="submit" class="btn btn-primary save-btn">提交</button> -->
                             </form>
                         </div>
                     </div>

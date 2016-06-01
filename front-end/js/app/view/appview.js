@@ -3,6 +3,7 @@ define(function(require, exports, module) {
         _ = require('underscore'),
         Backbone = require('backbone');
     var xk = require('biz/xk');
+    var enums = require('biz/enums');
     var api = require('api');
     var appRouter = require('router/approuter');
 
@@ -33,13 +34,15 @@ define(function(require, exports, module) {
         _logout: function(){
             api.logout().then(function(){
                 xk.role = '';
+                xk.isLogin = false;
                 appRouter.goto('login');
             });
         },
 
         setHeader: function() {
-            this.$('.user-header .user-role').text(xk.role);
+            this.$('.user-header .user-role').text(enums.roleMap[xk.role]);
             this.$('.user-header .user-name').text(xk.name);
+            this.$('.user-header .user-id').text(xk.id);
         }
     });
 
