@@ -107,7 +107,8 @@ define(function(require, exports, module) {
                         if (!row.courseDetail) {
                             return '<button class="btn btn-primary assign-room">分配教室</button>';
                         } else {
-                            return row.courseDetailDisplay;
+                            // return row.courseDetailDisplay;
+                            return '<div class="assign-room" style="cursor:pointer;">'+row.courseDetailDisplay+'</div>';
                             // return courseDetail;
                         }
                     },
@@ -223,7 +224,8 @@ define(function(require, exports, module) {
                     events: {
                         'change .weekday-select': function (e, value, row, index) {
                             var $e = $(e.currentTarget);
-                            row.time = '' + $e.val() + row.section;
+                            row.weekday = $e.val();
+                            row.time = '' + row.weekday + row.section;
                             self.assignRoomByTime(row.time).then(function (rooms) {
                                 row.rooms = rooms;
                                 $table.bootstrapTable('updateRow', {index: index, row: row});
@@ -247,7 +249,8 @@ define(function(require, exports, module) {
                     events: {
                         'change .section-select': function (e, value, row, index) {
                             var $e = $(e.currentTarget);
-                            row.time = '' + row.weekday + $e.val();
+                            row.section = $e.val();
+                            row.time = '' + row.weekday + row.section;
                             self.assignRoomByTime(row.time).then(function (rooms) {
                                 row.rooms = rooms;
                                 $table.bootstrapTable('updateRow', {index: index, row: row});
@@ -309,100 +312,93 @@ define(function(require, exports, module) {
         // 修改课程
         _initModifyCourse: function(json){
             var self = this;
-            if (this.modifyCourseTable) {
-                this.modifyCourseTable.bootstrapTable('destroy');
+            if (this.courseModifyTable) {
+                this.courseModifyTable.bootstrapTable('destroy');
             }
-            var $table = this.$('.course-modify-table');
+
+            var $table = this.$('.course-pass-table');
+            this.courseModifyTable = $table;
             var tableOptions = {
                 height: 500,
                 columns: [],
                 data: []
             };
+
             tableOptions.columns = [
                 {
-                    field: 'course_name',
+                    field: 'courseName',
                     title: '课程名称'
                 }, {
-                    field: 'course_size',
+                    field: 'courseNo',
+                    title: '课程代码',
+                }, {
+                    field: 'courseSize',
                     title: '选课人数上限',
                     editable: {
                         type: 'text',
-                        validate: function (value) {
-                            value = +$.trim(value);
-                            if (isNaN(value)) {
-                                return '请输入一个数字';
-                            };
-                            var datas = $table.bootstrapTable('getData'),
-                                index = $(this).parents('tr').data('index'),
-                                data = datas[index];
-                            self.modifyCourse(data);
+                        title: '请输入课程代码',
+                        validate: function (value, row, index) {
+                            if (!value) {
+                                return '选课人数不能为空';
+                            }
                         }
                     }
                 }, {
-                    field: 'course_time',
+                    field: 'applyTime',
                     title: '上课时间',
-                    editable: {
-                        type: 'text',
-                        // type: 'select',
-                        validate: function (value) {
-                            var datas = $table.bootstrapTable('getData'),
-                                index = $(this).parents('tr').data('index'),
-                                data = datas[index];
-                            self.modifyCourse(data);
-                        }
-                    }
-                }, {
-                    field: 'course_room',
-                    title: '上课地点',
-                    editable: {
-                        type: 'text',
-                        validate: function (value) {
-                            value = +$.trim(value);
-                            if (isNaN(value)) {
-                                return '请输入一个数字';
-                            };
-                            var datas = $table.bootstrapTable('getData'),
-                                index = $(this).parents('tr').data('index'),
-                                data = datas[index];
-                            self.modifyCourse(data);
-                        }
-                    }
-                }, {
-                    field: 'course_restriction_grade',
-                    title: '年级限制',
-                    editable: {
-                        type: 'text',
-                        validate: function (value) {
-                            
-                            self.modifyCourse(data);
-                        }
-                    }
-                }, {
-                    field: 'course_restriction_major',
-                    title: '专业限制',
-                    editable: {
-                        type: 'text',
-                        validate: function (value) {
-                            
-                            self.modifyCourse(data);
-                        }
-                    }
-                }
-            ]
+                    formatter: function (value) {
+                        return util.parseTimesToHtml(value);
+                    },
 
-            for (var i = 0; i < json.data.length; i++) {
+                }, {
+                    field: 'room',
+                    title: '教室',
+                    formatter: function (value, row, index) {
+                        if (!row.courseDetail) {
+                            return '<button class="btn btn-primary assign-room">分配教室</button>';
+                        } else {
+                            // return row.courseDetailDisplay;
+                            return '<div class="assign-room">'+row.courseDetailDisplay+'</div>';
+                        }
+                    },
+                    events: {
+                        'click .assign-room': function (e, value, row, index) {
+                            var data = {
+                                applyTime: row.applyTime
+                            };
+                            self.assignRoom(data).then(function (roomsMap) {
+                                self.$('.assign-room-modal .course-name').text(row.courseName);
+                                self.$('.assign-room-modal').modal('show');
+                                self.assignRow = row;
+                                self.assignIndex = index;
+                                self._initRoomAssignTable(roomsMap);
+                                // self.getCourseStudents(row.courseId).then(function (students) {
+                                //     self._initCourseStudensTable(students);
+                                // });
+                            });
+                        },
+                    }
+                }, {
+                    field: 'courseRestrictionGrade',
+                    title: '年级限制'
+                }, {
+                    field: 'courseRestrictionMajor',
+                    title: '专业限制'
+                }
+            ];
+
+            for (var i = 0; i < courses.length; i++) {
                 var data = {};
-                data.course_id = json.data[i].course_id;
-                data.course_name = json.data[i].course_name;
-                data.course_size = json.data[i].course_size;
-                data.course_time = json.data[i].course_time;
-                data.course_room = json.data[i].course_room;
-                data.course_restriction_grade = json.data[i].course_restriction_grade;
-                data.course_restriction_major = json.data[i].course_restriction_major;
+                _.each(tableOptions.columns, function(column){
+                    data[column.field] = courses[i][column.field];
+                });
+                data.courseNo = '';
+                data.courseId = courses[i]['id'];
+                data.courseDetail = '';
                 tableOptions.data.push(data);
             }
 
-            this.modifyCourseTable = $table.bootstrapTable(tableOptions);
+            this.courseModifyTable = $table.bootstrapTable(tableOptions);
         },
 
         // 查看课程详情
@@ -492,8 +488,8 @@ define(function(require, exports, module) {
 
         getCommitedCourse: function(){
             var self = this;
-            api.getCommitedCourse().then(function (json) {
-                self._initModifyCourse(json);
+            api.getCommitedCourse().then(function (courses) {
+                self._initModifyCourse(courses);
             });
         },
 
@@ -569,11 +565,21 @@ define(function(require, exports, module) {
             var self = this;
             if (this.roomAssignTable && this.coursePassTable) {
                 var assignTableDatas = this.roomAssignTable.bootstrapTable('getData');
+                self.assignRow.applyTime = this.getApplyTimes(assignTableDatas);
                 self.assignRow.courseDetail = this.getCourseDetail(assignTableDatas);
                 self.assignRow.courseDetailDisplay = this.getCourseDetailDisplay(assignTableDatas);
                 this.coursePassTable.bootstrapTable('updateRow', {index: self.assignIndex, row: self.assignRow});
                 self.$('.assign-room-modal').modal('hide');
             }
+        },
+
+        getApplyTimes: function (datas) {
+            var res = [];
+            _.each(datas, function (data) {
+                res.push(data.time);
+            });
+
+            return res.join(',');
         },
 
         getCourseDetail: function (datas) {
