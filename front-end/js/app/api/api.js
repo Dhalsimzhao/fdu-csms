@@ -591,7 +591,7 @@ define(function(require, exports, module){
                     "id": 60,
                     "roomTime": "B3",
                     "idle": "1",
-                    "courseId": 0,
+                    "courseId": 402,
                     "roomId": 10001,
                     'roomName': 'room-name-2'
                 },
@@ -599,7 +599,7 @@ define(function(require, exports, module){
                     "id": 115,
                     "roomTime": "D1",
                     "idle": "1",
-                    "courseId": 0,
+                    "courseId": 403,
                     "roomId": 10002,
                     'roomName': 'room-name-3'
                 },
@@ -607,7 +607,7 @@ define(function(require, exports, module){
                     "id": 170,
                     "roomTime": "A5",
                     "idle": "1",
-                    "courseId": 0,
+                    "courseId": 404,
                     "roomId": 10003,
                     'roomName': 'room-name-4'
                 },
@@ -615,7 +615,7 @@ define(function(require, exports, module){
                     "id": 225,
                     "roomTime": "E2",
                     "idle": "1",
-                    "courseId": 0,
+                    "courseId": 405,
                     "roomId": 10004,
                     'roomName': 'room-name-5'
                 }

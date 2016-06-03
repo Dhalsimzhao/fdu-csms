@@ -103,10 +103,13 @@ define(function(require, exports, module) {
                 }, {
                     field: 'room',
                     title: '教室',
-                    formatter: function () {
-                        var html = '';
-                        html = '<button class="btn btn-primary assign-room">分配教室</button>'
-                        return html;
+                    formatter: function (value, row, index) {
+                        if (!row.courseDetail) {
+                            return '<button class="btn btn-primary assign-room">分配教室</button>';
+                        } else {
+                            return row.courseDetailDisplay;
+                            // return courseDetail;
+                        }
                     },
                     events: {
                         'click .assign-room': function (e, value, row, index) {
@@ -116,7 +119,8 @@ define(function(require, exports, module) {
                             self.assignRoom(data).then(function (roomsMap) {
                                 self.$('.assign-room-modal .course-name').text(row.courseName);
                                 self.$('.assign-room-modal').modal('show');
-                                // console.log(roomsMap);
+                                self.assignRow = row;
+                                self.assignIndex = index;
                                 self._initRoomAssignTable(roomsMap);
                                 // self.getCourseStudents(row.courseId).then(function (students) {
                                 //     self._initCourseStudensTable(students);
@@ -143,17 +147,23 @@ define(function(require, exports, module) {
                             if (!row.courseNo) {
                                 alert('请为课程输入课程代码。');
                                 return;
-                            } else if (!row.room) {
+                            } else if (!row.courseDetail) {
                                 alert('请先为课程分配教室！');
                                 return;
                             } else {
                                 var data = {
-
+                                    id: row.courseId,
+                                    size: row.courseSize,
+                                    resGrade: row.courseRestrictionGrade,
+                                    resMajor: row.courseRestrictionMajor,
+                                    courseNo: row.courseNo,
+                                    courseDetail: row.courseDetail
                                 };
+                                console.log(data);
                                 self.passCourse(data).then(function () {
                                     $table.bootstrapTable('remove', {
-                                        field: 'course_id',
-                                        values: [row.course_id]
+                                        field: 'courseId',
+                                        values: [row.courseId],
                                     });
                                 });
                             }
@@ -170,6 +180,7 @@ define(function(require, exports, module) {
                 });
                 data.courseNo = '';
                 data.courseId = courses[i]['id'];
+                data.courseDetail = '';
                 tableOptions.data.push(data);
             }
 
@@ -212,7 +223,11 @@ define(function(require, exports, module) {
                     events: {
                         'change .weekday-select': function (e, value, row, index) {
                             var $e = $(e.currentTarget);
-                            console.log($e.val());
+                            row.time = '' + $e.val() + row.section;
+                            self.assignRoomByTime(row.time).then(function (rooms) {
+                                row.rooms = rooms;
+                                $table.bootstrapTable('updateRow', {index: index, row: row});
+                            });
                         }
                     },
                 }, {
@@ -220,37 +235,41 @@ define(function(require, exports, module) {
                     title: '节次',
                     formatter: function(value){
                         var html = '<select class="form-control section-select" name="section">';
-                        var num = 11;
-                        while(num) {
+                        var num = 1;
+                        while(num < 12) {
                             var isSelected = num == value ? 'selected' : '';
                             html += '<option value="' + num + '" ' + isSelected + '>' + num + '</option>'
-                            num--;
+                            num++;
                         }
                         html += '</select>';
                         return html;
                     },
-                    events: function () {
-                        
+                    events: {
+                        'change .section-select': function (e, value, row, index) {
+                            var $e = $(e.currentTarget);
+                            row.time = '' + row.weekday + $e.val();
+                            self.assignRoomByTime(row.time).then(function (rooms) {
+                                row.rooms = rooms;
+                                $table.bootstrapTable('updateRow', {index: index, row: row});
+                            });
+                        }
                     },
                 }, {
                     field: 'room',
                     title: '教室',
-                    formatter: function (rooms) {
-                        var html = '';
-                        if (rooms.length === 0) {
-                            html += '无可用教室';
-                        } else {
-                            html = '<select class="form-control room-select" name="room">';
-                            _.each(rooms, function (room) {
-                                html += '<option value="' + room.courseId + '">' + room.roomName + '</option>'
-                            });
-                            html += '</select>';
-                        }
-                        return html;
+                    formatter: function (rooms, row, index) {
+                        row.courseRoomId = rooms[0]['courseId'];
+                        row.courseRoomName = rooms[0]['roomName'];
+                        return self._displayRooms(rooms);
                     },
                     events: {
-                        'change .room-select': function (e) {
-                            
+                        'change .room-select': function (e, value, row, index) {
+                            var $e = $(e.currentTarget);
+                            var room = _.find(row.room, function (rm) {
+                                return rm.courseId == $e.val();
+                            });
+                            row.courseRoomId = room.courseId;
+                            row.courseRoomName = room.roomName;
                         }
                     }
                 }
@@ -265,11 +284,26 @@ define(function(require, exports, module) {
                 data.room = roomsMap[time];
                 data.time = time;
                 data.courseRoomId = '';
+                data.courseRoomName = '';
 
                 tableOptions.data.push(data);
             }
 
             this.roomAssignTable = $table.bootstrapTable(tableOptions);
+        },
+
+        _displayRooms: function (rooms) {
+            var html = '';
+            if (rooms.length === 0) {
+                html += '无可用教室';
+            } else {
+                html = '<select class="form-control room-select" name="room">';
+                _.each(rooms, function (room) {
+                    html += '<option value="' + room.courseId + '">' + room.roomName + '</option>'
+                });
+                html += '</select>';
+            }
+            return html;
         },
 
         // 修改课程
@@ -477,6 +511,14 @@ define(function(require, exports, module) {
             });
         },
 
+        assignRoomByTime: function (roomTime) {
+            var def = $.Deferred();
+            api.assignRoom({roomTime: roomTime}).then(function (rooms) {
+                def.resolve(rooms);
+            });
+            return def.promise();
+        },
+
         assignRoom: function (data) {
             var def = $.Deferred();
             var applyTime = data.applyTime;
@@ -502,7 +544,7 @@ define(function(require, exports, module) {
             });
 
             $.when.apply($, requests).then(function () {
-                console.log(arguments);
+                // console.log(arguments);
                 _.each(arguments, function (roomMap) {
                     for (var time in roomMap) {
                         self.roomTimeMap[time] = roomMap[time];
@@ -524,9 +566,32 @@ define(function(require, exports, module) {
         },
 
         _confirmRoomAssign: function (e) {
-            if (this.roomAssignTable) {
-
+            var self = this;
+            if (this.roomAssignTable && this.coursePassTable) {
+                var assignTableDatas = this.roomAssignTable.bootstrapTable('getData');
+                self.assignRow.courseDetail = this.getCourseDetail(assignTableDatas);
+                self.assignRow.courseDetailDisplay = this.getCourseDetailDisplay(assignTableDatas);
+                this.coursePassTable.bootstrapTable('updateRow', {index: self.assignIndex, row: self.assignRow});
+                self.$('.assign-room-modal').modal('hide');
             }
+        },
+
+        getCourseDetail: function (datas) {
+            var res = [];
+            _.each(datas, function (data) {
+                res.push(data.courseRoomId);
+            });
+
+            return res.join(',');
+        },
+
+        getCourseDetailDisplay: function (datas) {
+            var res = [];
+            _.each(datas, function (data) {
+                res.push(data.courseRoomName);
+            });
+
+            return res.join(',');
         }
     });
 
