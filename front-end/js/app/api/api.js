@@ -88,16 +88,23 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/login/Login';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -110,16 +117,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/login/Logout';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -132,16 +147,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/login/ChangePwd';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -158,16 +181,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/' + xk.role + '/ById';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -180,16 +211,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/' + xk.role + '/Update';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -205,16 +244,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/course/New';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.course);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+            
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -229,16 +276,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/teacher/RecordCourseGrade';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -300,16 +355,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/course/List';
-            $.get(url, {teacherNo: xk.id}, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.course);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -341,16 +404,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = '/teacher/StudentList';
-            $.get(url, {courseId: courseId}, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.student);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: {courseId: courseId},
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -560,16 +631,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/course/List';
-            $.get(url, {managerNo: xk.id}, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.student);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: {managerNo: xk.id},
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -623,16 +702,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + 'course/RoomList';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.room);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.room);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -647,16 +734,24 @@ define(function(require, exports, module){
         } else {
             var def = $.Deferred();
             var url = this._urlprefix + '/course/Pass';
-            $.get(url, data, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.course);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -785,24 +880,6 @@ define(function(require, exports, module){
                     console.log(err);
                     def.reject(err);
                 }
-            });
-
-            return def.promise();
-        }
-    }
-
-    API.prototype.debug = function() {
-        if (debug) {
-            return this.fake({
-                role: ''
-            });
-        } else {
-            var def = $.Deferred();
-            var url = '/login';
-            $.get(url, data, function(data){
-                def.resolve(data);
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
