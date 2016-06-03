@@ -261,7 +261,7 @@ define(function(require, exports, module) {
                     field: 'room',
                     title: '教室',
                     formatter: function (rooms, row, index) {
-                        row.courseRoomId = rooms[0]['courseId'];
+                        row.courseRoomId = rooms[0]['id'];
                         row.courseRoomName = rooms[0]['roomName'];
                         return self._displayRooms(rooms);
                     },
@@ -269,9 +269,9 @@ define(function(require, exports, module) {
                         'change .room-select': function (e, value, row, index) {
                             var $e = $(e.currentTarget);
                             var room = _.find(row.room, function (rm) {
-                                return rm.courseId == $e.val();
+                                return rm.id == $e.val();
                             });
-                            row.courseRoomId = room.courseId;
+                            row.courseRoomId = room.id;
                             row.courseRoomName = room.roomName;
                         }
                     }
@@ -302,7 +302,7 @@ define(function(require, exports, module) {
             } else {
                 html = '<select class="form-control room-select" name="room">';
                 _.each(rooms, function (room) {
-                    html += '<option value="' + room.courseId + '">' + room.roomName + '</option>'
+                    html += '<option value="' + room.id + '">' + room.roomName + '</option>'
                 });
                 html += '</select>';
             }
@@ -493,13 +493,6 @@ define(function(require, exports, module) {
             });
         },
 
-        getAllCourse: function () {
-            var self = this;
-            api.getAllCourse().then(function (json) {
-                self._initAllCourse(json);
-            });
-        },
-
         getAllStuCourse: function () {
             var self = this;
             api.getAllStuCourse().then(function (json) {
@@ -598,7 +591,14 @@ define(function(require, exports, module) {
             });
 
             return res.join(',');
-        }
+        },
+
+        getAllCourse: function () {
+            var self = this;
+            api.getAllCourse().then(function (json) {
+                self._initAllCourse(json);
+            });
+        },
     });
 
     return new ManagerPage();

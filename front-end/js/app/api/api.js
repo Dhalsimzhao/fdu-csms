@@ -634,7 +634,7 @@ define(function(require, exports, module){
 
             $.ajax({
                 url: url,
-                data: {managerNo: xk.id},
+                data: {status: 'PENDING'},
                 method: 'GET',
                 success: function (json) {
                     var res = checkResponse(json);
@@ -701,7 +701,7 @@ define(function(require, exports, module){
             ]);
         } else {
             var def = $.Deferred();
-            var url = this._urlprefix + 'course/RoomList';
+            var url = this._urlprefix + '/course/RoomList';
 
             $.ajax({
                 url: url,
@@ -836,35 +836,72 @@ define(function(require, exports, module){
         }
     }
 
-    API.prototype.getAllCourse = function(data) {
+    API.prototype.getAllCourse = function() {
         if (debug) {
-            return this.fake({
-                data: [
-                    {
-                        course_id: 'id1',
-                        course_name: '课程名称1',
-                        course_stuname: '学生姓名1',
-                        course_stucomment: 90,
-                        course_stuscore: 100,
-                    },
-                    {
-                        course_id: 'id2',
-                        course_name: '课程名称2',
-                        course_stuname: '学生姓名2',
-                        course_stucomment: 70,
-                        course_stuscore: 00,
-                    }
-                ]
-            });
+            return this.fake([
+                {
+                    "updateDate": "2016-05-22 13:45:02.0",
+                    "courseSize": 200,
+                    "teacherNo": "10000",
+                    "courseRestrictionGrade": "1,2,4",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化1",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PASSED",
+                    "courseEnrollment": 2,
+                    "id": 401,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A5,A6,B4,E8",
+                    "createDate": "2016-05-29 14:28:08.0"
+                },
+                {
+                    "updateDate": "2016-05-22 13:45:35.0",
+                    "courseSize": 160,
+                    "teacherNo": "10002",
+                    "courseRestrictionGrade": "1,2,4",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化2",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PASSED",
+                    "courseEnrollment": 0,
+                    "id": 501,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A5,A6,B4,E8",
+                    "createDate": "2016-05-28 19:05:03.0"
+                },
+                {
+                    "updateDate": "2016-05-22 13:45:02.0",
+                    "courseSize": 2,
+                    "teacherNo": "10000",
+                    "courseRestrictionGrade": "1,2",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化3",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PASSED",
+                    "courseEnrollment": 0,
+                    "id": 601,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A1,A2,B1,E1",
+                    "createDate": "2016-05-28 19:05:03.0"
+                }
+            ]);
         } else {
             var def = $.Deferred();
-            var url = '/allcourse';
+            var url = this._urlprefix + '/course/List';
             $.ajax({
-                url: '',
-                data: data,
+                url: url,
                 method: 'GET',
                 success: function (json) {
-                    def.resolve(data);
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
                 },
                 error: function (err) {
                     console.log(err);
