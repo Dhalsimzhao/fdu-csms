@@ -46,7 +46,7 @@ define(function(require, exports, module) {
             var data = {
                 oldPwd: oldPwd,
                 newPwd: newPwd,
-                code: 
+                code: code
             }
 
             if (!oldPwd || !newPwd || !confirmNewPwd) {

@@ -11,14 +11,10 @@ define(function(require, exports, module) {
             if (!xk.role) {
                 var self = this;
                 this.getRole().then(function(data){
-                    // data = {role: '' || 'teacher' || 'student' || 'manager' };
                     if (!data.isLogin) {
                         goToLogin();
-                        if (callback) callback.apply(self, args);
-                    } else {
-                        xk.role = data.loginType;
-                        if (callback) callback.apply(self, args);
                     }
+                    if (callback) callback.apply(self, args);
                 }, function(err){
                     console.log(err);
                 });
@@ -45,8 +41,18 @@ define(function(require, exports, module) {
         },
 
         getRole: function(){
+            var def = $.Deferred();
+            api.getRole().then(function (user) {
+                xk.role = user.loginType;
+                xk.id = user.loginId;
+                xk.name = user.name;
+                xk.password = user.password;
+                xk.isLogin = user.isLogin === 'true' ? true : false;
 
-            return api.getRole();
+                def.resolve(xk);
+            });
+
+            return def.promise();
         }
     });
     

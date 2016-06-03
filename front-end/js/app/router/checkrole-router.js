@@ -5,9 +5,7 @@ define(function(require, exports, module) {
 
     function checkRole () {
         api.getRole().then(function(json){
-        	// if (json.role) {
-        		appRouter.goto(json.role || 'login');
-        	// }
+    		appRouter.goto(json.role || 'login');
         });
     }
 

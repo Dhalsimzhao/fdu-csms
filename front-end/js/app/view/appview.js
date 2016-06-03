@@ -19,7 +19,10 @@ define(function(require, exports, module) {
 
         events: function(){
             return {
-                'click .logout-btn': this._logout
+                'click .logout-btn': this._logout,
+                'click .change-pwd': function(){
+                    appRouter.goto('changepwd');
+                },
             }
         },
 

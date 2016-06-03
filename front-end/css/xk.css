@@ -47,6 +47,10 @@ h1.title{
 .app-header .logout-btn{
 	float: right;
 }
+.app-header .change-pwd{
+	float: right;
+	margin-left: 10px;
+}
 .user-header{
 	float: left;
 }

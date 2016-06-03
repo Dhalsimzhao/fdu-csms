@@ -60,10 +60,10 @@ define(function(require, exports, module) {
             };
             
             console.log(data);
-            api.login(data).then(function(data){
+            api.login(data).then(function(user){
                 xk.isLogin = true;
                 xk.role = data.role;
-                appRouter.goto(xk.role);
+                appRouter.goto(data.role);
             });
         }
     });

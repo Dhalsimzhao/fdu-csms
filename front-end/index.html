@@ -34,6 +34,9 @@
                     <strong>角色：</strong><span class="user-role"></span>
                     <strong>用户名：</strong><span class="user-name"></span>
                 </div>
+                <div class="btn btn-default change-pwd">
+                    修改密码
+                </div>
                 <div class="btn logout-btn btn-warning">登出</div>
             </div>
             <div class="containers" role="teacher">
@@ -46,7 +49,6 @@
         <div class="body-loading-box">
             <div class="body-loading">
                 加载中...
-                <!-- <div class="circle"></div> -->
             </div>
         </div>
     </script>
@@ -75,7 +77,7 @@
                 <div class="form-group login-captcha">
                     <label for="captcha" style="display:block;">验证码</label>
                     <input class="form-control" style="display:inline-block;width:130px;" />
-                    <img src="/login/LoginCode" alt="验证码" width="80px;" height="26px;">
+                    <img src="/services/csms/login/LoginCode" alt="验证码" width="80px;" height="26px;">
                 </div>
                 <button type="submit" class="btn btn-primary login-btn">登录</button>
             </form>
@@ -101,7 +103,7 @@
                 <div class="form-group login-captcha">
                     <label for="captcha" style="display:block;">验证码</label>
                     <input class="form-control" style="display:inline-block;width:130px;" required />
-                    <img src="/login/LoginCode" alt="验证码" width="80px;" height="26px;">
+                    <img src="/services/csms/login/LoginCode" alt="验证码" width="80px;" height="26px;">
                 </div>
                 <button type="submit" class="btn btn-primary changepwd-btn">修改密码</button>
                 <button class="btn btn-primary cancel-btn">取消</button>
@@ -114,9 +116,9 @@
         <div class="teacher-page">
             <div>
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation">
+                    <!-- <li role="presentation">
                         <a href="#teacher_profile" aria-controls="teacher_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
-                    </li>
+                    </li> -->
                     <li role="presentation">
                         <a href="#createcourse" aria-controls="createcourse" role="tab" data-toggle="tab" act="createcourse">开设课程</a>
                     </li>
@@ -127,7 +129,7 @@
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane" id="teacher_profile">
+                    <!-- <div role="tabpanel" class="tab-pane" id="teacher_profile">
                         <div class="profile-container">
                             <form>
                                 <div class="form-group user-name">
@@ -145,10 +147,9 @@
                                 <div class="form-group change-pwd" style="cursor: pointer;color: #428bca;">
                                     修改密码
                                 </div>
-                                <!-- <button type="submit" class="btn btn-primary save-btn">提交</button> -->
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                     <div role="tabpanel" class="tab-pane" id="createcourse">
                         <div class="profile-container">
                             <form>
@@ -213,7 +214,22 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="getteachercourse">
-                        <table class="course-members-table" data-search="true"></table>
+                        <table class="teacher-courses-table" data-search="true"></table>
+
+                        <div class="modal fade course-students-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                              <div class="modal-content">
+
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                  <h4 class="modal-title course-name"></h4>
+                                </div>
+                                <div class="modal-body">
+                                  <table class="course-students-table" data-search="true"></table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     </div>
                 </div>
             </div>
@@ -225,9 +241,9 @@
         <div class="student-page">
             <div>
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation">
+                    <!-- <li role="presentation">
                         <a href="#student_profile" aria-controls="student_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
-                    </li>
+                    </li> -->
                     <li role="presentation">
                         <a href="#choosecourse" aria-controls="choosecourse" role="tab" data-toggle="tab" act="choosecourse">选课</a>
                     </li>
@@ -238,7 +254,7 @@
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane" id="student_profile">
+                    <!-- <div role="tabpanel" class="tab-pane" id="student_profile">
                         <div class="profile-container">
                             <form>
                                 <div class="form-group user-name">
@@ -266,15 +282,14 @@
                                 <div class="form-group change-pwd" style="cursor: pointer;color: #428bca;">
                                     修改密码
                                 </div>
-                                <!-- <button type="submit" class="btn btn-primary save-btn">提交</button> -->
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                     <div role="tabpanel" class="tab-pane" id="choosecourse">
-                        <table class="course-choose-table"></table>
+                        <table class="course-choose-table" data-search="true"></table>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="schedule">
-                        <table class="stucourse-schedule"></table>
+                        <table class="stucourse-schedule" data-search="true"></table>
                     </div>
                 </div>
 
@@ -304,7 +319,25 @@
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane" id="commitcourse">
-                        <table class="course-commit-table" data-search="true"></table>
+                        <table class="course-pass-table" data-search="true"></table>
+                        <div class="modal fade assign-room-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                              <div class="modal-content">
+
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                  <h4 class="modal-title course-name"></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="room-assign-table" data-search="true"></table>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-primary confirm-room-assign">确认</button>
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="modifycourse">
                         <table class="course-modify-table" data-search="true"></table>

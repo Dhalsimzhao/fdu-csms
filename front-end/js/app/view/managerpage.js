@@ -45,7 +45,6 @@ define(function(require, exports, module) {
         },
         show: function() {
             this.render();
-            this._initPlugins();
             $('.login-container').hide();
             $('.changepwd-container').hide();
             $('.app-container').show();
@@ -55,19 +54,21 @@ define(function(require, exports, module) {
             this.$('a[data-toggle="tab"]').eq(0).click();
         },
 
-        _initPlugins: function() {
-            var self = this;
+        events: function () {
+            return {
+                'click .confirm-room-assign': this._confirmRoomAssign
+            }
         },
 
         // 审批课程
-        _initCommitCourse: function(json) {
+        _initCommitCourse: function(courses) {
             var self = this;
-            if (this.commitCourseTable) {
-                this.commitCourseTable.bootstrapTable('destroy');
+            if (this.coursePassTable) {
+                this.coursePassTable.bootstrapTable('destroy');
             }
 
-            var $table = this.$('.course-commit-table');
-            this.commitCourseTable = $table;
+            var $table = this.$('.course-pass-table');
+            this.coursePassTable = $table;
             var tableOptions = {
                 height: 500,
                 columns: [],
@@ -76,50 +77,199 @@ define(function(require, exports, module) {
 
             tableOptions.columns = [
                 {
-                    field: 'course_name',
+                    field: 'courseName',
                     title: '课程名称'
                 }, {
-                    field: 'course_size',
+                    field: 'courseNo',
+                    title: '课程代码',
+                    editable: {
+                        type: 'text',
+                        title: '请输入课程代码',
+                        validate: function (value, row, index) {
+                            if (!value) {
+                                return '课程代码不能为空';
+                            }
+                        }
+                    },
+                }, {
+                    field: 'courseSize',
                     title: '选课人数上限'
                 }, {
-                    field: 'course_restriction_grade',
+                    field: 'applyTime',
+                    title: '上课时间',
+                    formatter: function (value) {
+                        return util.parseTimesToHtml(value);
+                    }
+                }, {
+                    field: 'room',
+                    title: '教室',
+                    formatter: function () {
+                        var html = '';
+                        html = '<button class="btn btn-primary assign-room">分配教室</button>'
+                        return html;
+                    },
+                    events: {
+                        'click .assign-room': function (e, value, row, index) {
+                            var data = {
+                                applyTime: row.applyTime
+                            };
+                            self.assignRoom(data).then(function (roomsMap) {
+                                self.$('.assign-room-modal .course-name').text(row.courseName);
+                                self.$('.assign-room-modal').modal('show');
+                                // console.log(roomsMap);
+                                self._initRoomAssignTable(roomsMap);
+                                // self.getCourseStudents(row.courseId).then(function (students) {
+                                //     self._initCourseStudensTable(students);
+                                // });
+                            });
+                        },
+                    }
+                }, {
+                    field: 'courseRestrictionGrade',
                     title: '年级限制'
                 }, {
-                    field: 'course_restriction_major',
+                    field: 'courseRestrictionMajor',
                     title: '专业限制'
                 }, {
                     field: 'course_commit',
                     title: '审批',
                     formatter: function() {
                         return [
-                            '<button class="btn btn-primary apply-course">同意</button>'
+                            '<button class="btn btn-primary pass-course">同意</button>'
                         ].join('');
                     },
                     events: {
-                        'click .apply-course': function(e, value, row, index){
-                            console.log(arguments);
-                            $table.bootstrapTable('remove', {
-                                field: 'course_id',
-                                values: [row.course_id]
-                            });
+                        'click .pass-course': function(e, value, row, index){
+                            if (!row.courseNo) {
+                                alert('请为课程输入课程代码。');
+                                return;
+                            } else if (!row.room) {
+                                alert('请先为课程分配教室！');
+                                return;
+                            } else {
+                                var data = {
+
+                                };
+                                self.passCourse(data).then(function () {
+                                    $table.bootstrapTable('remove', {
+                                        field: 'course_id',
+                                        values: [row.course_id]
+                                    });
+                                });
+                            }
+                            
                         }
                     }
                 }
             ];
 
-            for (var i = 0; i < json.data.length; i++) {
+            for (var i = 0; i < courses.length; i++) {
                 var data = {};
-                data.course_id = json.data[i].course_id;
-                data.course_name = json.data[i].course_name;
-                data.course_size = json.data[i].course_size;
-                // data.course_time = json.data[i].course_time;
-                // data.course_room = json.data[i].course_room;
-                data.course_restriction_grade = json.data[i].course_restriction_grade;
-                data.course_restriction_major = json.data[i].course_restriction_major;
+                _.each(tableOptions.columns, function(column){
+                    data[column.field] = courses[i][column.field];
+                });
+                data.courseNo = '';
+                data.courseId = courses[i]['id'];
                 tableOptions.data.push(data);
             }
 
-            this.commitCourseTable = $table.bootstrapTable(tableOptions);
+            this.coursePassTable = $table.bootstrapTable(tableOptions);
+        },
+
+        _initRoomAssignTable: function (roomsMap) {
+            var self = this;
+            if (this.roomAssignTable) {
+                this.roomAssignTable.bootstrapTable('destroy');
+            }
+
+            var $table = this.$('.room-assign-table');
+            this.roomAssignTable = $table;
+            var tableOptions = {
+                columns: [],
+                data: []
+            };
+
+            tableOptions.columns = [
+                {
+                    field: 'weekday',
+                    title: '周',
+                    formatter: function(value){
+                        var arr = [
+                            {value: 'A', title: '一'}, 
+                            {value: 'B', title: '二'}, 
+                            {value: 'C', title: '三'}, 
+                            {value: 'D', title: '四'}, 
+                            {value: 'E', title: '五'}, 
+                        ];
+                        var html = '<select class="form-control weekday-select" name="weekday">';
+                        _.each(arr, function (e) {
+                            var isSelected = e.value == value ? 'selected' : '';
+                            html += '<option value="' + e.value + '" ' + isSelected + '>' + e.title + '</option>'
+                        });
+                        html += '</select>';
+                        return html;
+                    },
+                    events: {
+                        'change .weekday-select': function (e, value, row, index) {
+                            var $e = $(e.currentTarget);
+                            console.log($e.val());
+                        }
+                    },
+                }, {
+                    field: 'section',
+                    title: '节次',
+                    formatter: function(value){
+                        var html = '<select class="form-control section-select" name="section">';
+                        var num = 11;
+                        while(num) {
+                            var isSelected = num == value ? 'selected' : '';
+                            html += '<option value="' + num + '" ' + isSelected + '>' + num + '</option>'
+                            num--;
+                        }
+                        html += '</select>';
+                        return html;
+                    },
+                    events: function () {
+                        
+                    },
+                }, {
+                    field: 'room',
+                    title: '教室',
+                    formatter: function (rooms) {
+                        var html = '';
+                        if (rooms.length === 0) {
+                            html += '无可用教室';
+                        } else {
+                            html = '<select class="form-control room-select" name="room">';
+                            _.each(rooms, function (room) {
+                                html += '<option value="' + room.courseId + '">' + room.roomName + '</option>'
+                            });
+                            html += '</select>';
+                        }
+                        return html;
+                    },
+                    events: {
+                        'change .room-select': function (e) {
+                            
+                        }
+                    }
+                }
+            ];
+
+            for (var time in roomsMap) {
+                var data = {};
+
+                var tinfo = util.splitTime(time);
+                data.weekday = tinfo.weekday;
+                data.section = tinfo.section;
+                data.room = roomsMap[time];
+                data.time = time;
+                data.courseRoomId = '';
+
+                tableOptions.data.push(data);
+            }
+
+            this.roomAssignTable = $table.bootstrapTable(tableOptions);
         },
 
         // 修改课程
@@ -301,8 +451,8 @@ define(function(require, exports, module) {
 
         getUncommitedCourse: function(){
             var self = this;
-            api.getUncommitedCourse().then(function (json) {
-                self._initCommitCourse(json);
+            api.getUncommitedCourse().then(function (courses) {
+                self._initCommitCourse(courses);
             });
         },
 
@@ -327,8 +477,56 @@ define(function(require, exports, module) {
             });
         },
 
-        modifyCourse: function (data) {
-            api.modifyCourse(data);
+        assignRoom: function (data) {
+            var def = $.Deferred();
+            var applyTime = data.applyTime;
+            var times = data.applyTime.split(',');
+            var requests = [];
+            self.roomTimeMap = {};
+            _.each(times, function (time) {
+                var roomTime = {
+                    roomTime: time
+                };
+                // var request = api.assignRoom(roomTime).then(function (rooms) {
+                //     self.roomTimeMap[time] = rooms;
+                // });
+                // requests.push(request);
+
+                var d = $.Deferred();
+                api.assignRoom(roomTime).then(function (rooms) {
+                    var rt = {};
+                    rt[time] = rooms;
+                    d.resolve(rt);
+                });
+                requests.push(d.promise());
+            });
+
+            $.when.apply($, requests).then(function () {
+                console.log(arguments);
+                _.each(arguments, function (roomMap) {
+                    for (var time in roomMap) {
+                        self.roomTimeMap[time] = roomMap[time];
+                    }
+                })
+                def.resolve(self.roomTimeMap);
+            });
+
+            return def.promise();
+        },
+
+        passCourse: function (data) {
+            var def = $.Deferred();
+            api.passCourse(data).then(function (data) {
+                def.resolve(data);
+            });
+
+            return def.promise();
+        },
+
+        _confirmRoomAssign: function (e) {
+            if (this.roomAssignTable) {
+
+            }
         }
     });
 

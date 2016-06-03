@@ -28,7 +28,14 @@ define(function(require, exports, module) {
             'M': '男',
             'F': '女'
         },
-        weekdays: ['A', 'B', 'C', 'D', 'E']
+        weekdays: ['A', 'B', 'C', 'D', 'E'],
+        wdsMap: {
+            'A': '周一',
+            'B': '周二',
+            'C': '周三',
+            'D': '周四',
+            'E': '周五',
+        },
     };
 
     return enums;
