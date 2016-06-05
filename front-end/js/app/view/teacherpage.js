@@ -176,13 +176,16 @@ define(function(require, exports, module) {
                 }, {
                     field: 'courseGrade',
                     title: '成绩',
+                    formatter: function (value) {
+                        return value === -1 ? '暂无成绩' : value;
+                    },
                     editable: {
                         type: 'text',
                         title: '请输入成绩',
                         validate: function (value, row, index) {
                             value = +$.trim(value);
-                            if (isNaN(value)) {
-                                return '请输入一个数字';
+                            if (isNaN(value) || value < 0) {
+                                return '请输入一个大于0的数字！';
                             };
                             var datas = $table.bootstrapTable('getData'),
                                 index = $(this).parents('tr').data('index'),

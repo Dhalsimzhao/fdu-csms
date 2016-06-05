@@ -378,7 +378,7 @@ define(function(require, exports, module){
             return def.promise();
         }
     }
-
+    
     API.prototype.getCourseStudents = function(courseId) {
         if (debug) {
             return this.fake([
@@ -389,7 +389,7 @@ define(function(require, exports, module){
                     "studentMajor": "Foreign Language and Literature",
                     "studentName": "Adam Rippion",
                     "id": '123',
-                    "courseGrade": 85,
+                    'courseGrade': -1,
                 },
                 {
                     "studentNo": "2013001004",
@@ -398,7 +398,7 @@ define(function(require, exports, module){
                     "studentMajor": "Chinese Language and Literature",
                     "studentName": "Joushua Farris",
                     "id": '321',
-                    "courseGrade": 99,
+                    'courseGrade': 88,
                 }
             ]);
         } else {
@@ -846,6 +846,7 @@ define(function(require, exports, module){
                     "courseRestrictionGrade": "1,2,4",
                     "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
                     "courseName": "语言文化1",
+                    "courseNo": "No.123123",
                     "courseCredits": 3,
                     "coursePeriod": 64,
                     "courseStatus": "PASSED",
@@ -862,6 +863,7 @@ define(function(require, exports, module){
                     "courseRestrictionGrade": "1,2,4",
                     "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
                     "courseName": "语言文化2",
+                    "courseNo": "No.258008",
                     "courseCredits": 3,
                     "coursePeriod": 64,
                     "courseStatus": "PASSED",
@@ -878,6 +880,7 @@ define(function(require, exports, module){
                     "courseRestrictionGrade": "1,2",
                     "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
                     "courseName": "语言文化3",
+                    "courseNo": "No.9034589",
                     "courseCredits": 3,
                     "coursePeriod": 64,
                     "courseStatus": "PASSED",
@@ -913,6 +916,159 @@ define(function(require, exports, module){
         }
     }
     
+    API.prototype.managerGetCourseStudents = function(courseId) {
+        if (debug) {
+            return this.fake([
+                {
+                    "studentNo": "2012002002",
+                    "studentGrade": "4",
+                    "studentGender": "M",
+                    "studentMajor": "Foreign Language and Literature",
+                    "studentName": "Adam Rippion",
+                    "id": '123',
+                    'evaluationGrade': 70,
+                    'courseGrade': -1,
+                },
+                {
+                    "studentNo": "2013001004",
+                    "studentGrade": "3",
+                    "studentGender": "F",
+                    "studentMajor": "Chinese Language and Literature",
+                    "studentName": "Joushua Farris",
+                    "id": '321',
+                    'evaluationGrade': -1,
+                    'courseGrade': 88,
+                }
+            ]);
+        } else {
+            var def = $.Deferred();
+            var url = '/manager/StudentList';
+
+            $.ajax({
+                url: url,
+                data: {courseId: courseId},
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.studentCourse);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.getAllStudents = function() {
+        if (debug) {
+            return this.fake([
+                {
+                    "studentPassword": "ttV1+yXOYAPQZ/mf3ufsVQ==",
+                    "studentGrade": "4",
+                    "updateDate": "2016-01-01 00:00:00.0",
+                    "studentGender": "F",
+                    "studentMajor": "Chinese Language and Literature",
+                    "studentName": "Ashley Wagner",
+                    "studentNo": "2012001003",
+                    "createDate": "2016-05-26 15:07:11.0"
+                },
+                {
+                    "studentPassword": "nJhRM108OcUYiYQ8RfUj5A==",
+                    "studentGrade": "4",
+                    "updateDate": "2016-01-01 00:00:00.0",
+                    "studentGender": "M",
+                    "studentMajor": "Foreign Language and Literature",
+                    "studentName": "Adam Rippion",
+                    "studentNo": "2012002002",
+                    "createDate": "2016-05-26 15:07:11.0"
+                },
+                {
+                    "studentPassword": "3cPm+qj+vmcYUGpOTfqhYA==",
+                    "studentGrade": "4",
+                    "updateDate": "2016-01-01 00:00:00.0",
+                    "studentGender": "F",
+                    "studentMajor": "History",
+                    "studentName": "Lily Brown",
+                    "studentNo": "2012003004",
+                    "createDate": "2016-05-26 15:07:11.0"
+                }
+            ]);
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/student/List';
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.managerGetStudentCourses = function (studentNo) {
+        if (debug) {
+            return this.fake([
+                {
+                    "courseNo": "111",
+                    "evaluationGrade": 88,
+                    "courseId": 401,
+                    "courseGrade": 59,
+                    "courseName": "语言文化"
+                },
+                {
+                    "courseNo": "222",
+                    "evaluationGrade": -1,
+                    "courseId": 1301,
+                    "courseGrade": -1,
+                    "courseName": "时间冲突测试"
+                }
+            ]);
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/manager/CourseList';
+            $.ajax({
+                url: url,
+                data: {studentNo: studentNo},
+                method: 'GET',
+                success: function (json) {
+                    if (res) {
+                        def.resolve(json.studentCourse);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
     API.prototype.getAllStuCourse = function(data) {
         if (debug) {
             return this.fake({
@@ -946,6 +1102,114 @@ define(function(require, exports, module){
                 method: 'GET',
                 success: function (json) {
                     def.resolve(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.newStudent = function(data) {
+        if (debug) {
+            return this.fake({
+                "id": "2016000000",
+                "name": "studentNew",
+                "gender": "M",
+                "grade": "1",
+                "createDate": "1464699449000",
+                "password": "d5ltOXj0E6/LBlxdR2EPTA==",
+                "updateDate": "1464699449000",
+                "major": "Chinese Language and Literature"
+            });
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/student/New';
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.deleteStudent = function(id) {
+        if (debug) {
+            return this.fake({});
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/student/Delete';
+
+            $.ajax({
+                url: url,
+                data: {id: id},
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.updateStudent = function(data) {
+        if (debug) {
+            return this.fake({
+                "id": "2017000000",
+                "name": "eee",
+                "gender": "F",
+                "grade": "4",
+                "createDate": "1465135127000",
+                "password": "BFzUURsqb4uC1cUQ0F8c4A==",
+                "updateDate": "1465135127000",
+                "major": "Chinese Language and Literature"
+            });
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/student/Update';
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.student);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
                 },
                 error: function (err) {
                     console.log(err);

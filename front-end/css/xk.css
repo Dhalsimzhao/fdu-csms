@@ -7,6 +7,15 @@ h1.title{
 	text-align: center;
 	margin: 0 0 40px 0;
 }
+.toolbar {
+	float: left;
+	margin-top: 10px;
+	cursor: pointer;
+}
+.new-student-form{
+	width: 250px;
+	margin: 0 auto;
+}
 .body-loading-box{
 	height: 100%;
 	width: 100%;

@@ -214,22 +214,21 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="getteachercourse">
-                        <table class="teacher-courses-table" data-search="true"></table>
+                        <table class="teacher-courses-table" data-search="true" data-pagination="true"></table>
 
                         <div class="modal fade course-students-modal" tabindex="-1" role="dialog" style="display: none;">
                             <div class="modal-dialog modal-lg">
-                              <div class="modal-content">
-
-                                <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                  <h4 class="modal-title course-name"></h4>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title course-name"></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="course-students-table" data-search="true" data-pagination="true"></table>
+                                    </div>
                                 </div>
-                                <div class="modal-body">
-                                  <table class="course-students-table" data-search="true"></table>
-                                </div>
-                              </div>
                             </div>
-                          </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -286,10 +285,10 @@
                         </div>
                     </div> -->
                     <div role="tabpanel" class="tab-pane" id="choosecourse">
-                        <table class="course-choose-table" data-search="true"></table>
+                        <table class="course-choose-table" data-search="true" data-pagination="true"></table>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="schedule">
-                        <table class="stucourse-schedule" data-search="true"></table>
+                        <table class="stucourse-schedule" data-search="true" data-pagination="true"></table>
                     </div>
                 </div>
 
@@ -306,20 +305,17 @@
                         <a href="#commitcourse" aria-controls="commitcourse" role="tab" data-toggle="tab" act="commitcourse">审批课程</a>
                     </li>
                     <li role="presentation">
-                        <a href="#modifycourse" aria-controls="modifycourse" role="tab" data-toggle="tab" act="modifycourse">修改课程</a>
+                        <a href="#getallcourse" aria-controls="getallcourse" role="tab" data-toggle="tab" act="getallcourse">查看所有课程</a>
                     </li>
                     <li role="presentation">
-                        <a href="#getallcourse" aria-controls="getallcourse" role="tab" data-toggle="tab" act="getallcourse">查看课程详情</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#getallstucourse" aria-controls="getallstucourse" role="tab" data-toggle="tab" act="getallstucourse">查看选课详情</a>
+                        <a href="#getallstudents" aria-controls="getallstudents" role="tab" data-toggle="tab" act="getallstudents">查看所有学生</a>
                     </li>
                 </ul>
 
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane" id="commitcourse">
-                        <table class="course-pass-table" data-search="true"></table>
+                        <table class="course-pass-table" data-search="true" data-pagination="true"></table>
                         <div class="modal fade assign-room-modal" tabindex="-1" role="dialog" style="display: none;">
                             <div class="modal-dialog modal-lg">
                               <div class="modal-content">
@@ -339,14 +335,86 @@
                             </div>
                           </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="modifycourse">
-                        <table class="course-modify-table" data-search="true"></table>
-                    </div>
                     <div role="tabpanel" class="tab-pane" id="getallcourse">
-                        <table class="course-all-table" data-search="true"></table>
+                        <table class="course-all-table" data-search="true" data-pagination="true"></table>
+                        <div class="modal fade course-all-students-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title course-name"></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="course-all-students-table" data-search="true" data-pagination="true"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="getallstucourse">
-                        <table class="stucourse-all-table" data-search="true"></table>
+                    <div role="tabpanel" class="tab-pane" id="getallstudents">
+                        <div class="toolbar">
+                            <button class="add-student-row btn btn-primary">
+                                <i class="glyphicon glyphicon-plus"></i> 新增学生
+                            </button>
+                        </div>
+                        <div class="modal fade new-student-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title">新建学生账号</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="new-student-form">
+                                            <div class="form-group user-name">
+                                                <label for="name">姓名</label>
+                                                <input type="text" class="form-control" />
+                                            </div>
+                                            <div class="form-group user-gender">
+                                                <label for="gender">性别</label>
+                                                <select class="form-control">
+                                                    <option value="M">男</option>
+                                                    <option value="F">女</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group user-grade">
+                                                <label for="grade">年级</label>
+                                                <select class="form-control">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group user-major">
+                                                <label for="major">专业</label>
+                                                <select class="form-control">
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary confirm-new-student">确认</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="student-all-table" data-search="true" data-pagination="true"></table>
+                        <div class="modal fade student-all-course-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title student-name"></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="student-courses-table" data-search="true" data-pagination="true"></table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
