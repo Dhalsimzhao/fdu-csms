@@ -132,9 +132,6 @@ define(function(require, exports, module) {
                     field: 'coursePeriod',
                     title: '学时'
                 }, {
-                    field: 'courseStatus',
-                    title: '审核状态'
-                }, {
                     field: 'applyTime',
                     title: '上课时间',
                     formatter: function (times) {
@@ -384,9 +381,9 @@ define(function(require, exports, module) {
             };
 
             console.log(data);
-            api.newCourse(data).then(function () {
+            api.newCourse(data).then(function (newCourse) {
                 self.$('.new-course-modal').modal('hide');
-
+                self.teacherPendingCourseTable.bootstrapTable('prepend', newCourse);
             });
         },
 

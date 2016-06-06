@@ -61,9 +61,21 @@ define(function(require, exports, module) {
             
             console.log(data);
             api.login(data).then(function(user){
-                xk.isLogin = true;
-                xk.role = data.role;
-                appRouter.goto(data.role);
+                api.getRole().then(function (user) {
+                    // xk.isLogin = true;
+                    // xk.id = data.loginId || 'loginId';
+                    // xk.role = data.role;
+                    // xk.name = 'Default Name';
+
+                    xk.role = user.loginType;
+                    xk.id = user.loginId;
+                    xk.name = user.name;
+                    xk.password = user.password;
+                    xk.isLogin = user.isLogin === 'true' ? true : false;
+
+                    appRouter.goto(data.role);
+                });
+                
             });
         }
     });

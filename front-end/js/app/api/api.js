@@ -238,6 +238,7 @@ define(function(require, exports, module){
     // teacher api
     
     API.prototype.teacherGetPenddingCourses = function(data) {
+        console.log(data);
         if (debug) {
             return this.fake([
                 {
@@ -291,8 +292,7 @@ define(function(require, exports, module){
             ]);
         } else {
             var def = $.Deferred();
-            var url = this._urlprefix + '/course/New';
-            
+            var url = this._urlprefix + '/course/List';
             $.ajax({
                 url: url,
                 data: data,
@@ -320,6 +320,7 @@ define(function(require, exports, module){
         if (debug) {
             return this.fake({
                 "updateDate": "1464521046000",
+                "courseName": "小学语文",
                 "courseSize": "3",
                 "teacherNo": "",
                 "courseRestrictionGrade": "1,2",
@@ -502,7 +503,7 @@ define(function(require, exports, module){
             ]);
         } else {
             var def = $.Deferred();
-            var url = '/teacher/StudentList';
+            var url = this._urlprefix + '/teacher/StudentList';
 
             $.ajax({
                 url: url,

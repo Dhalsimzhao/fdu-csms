@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     
     var xk = {
-        isLogin: true,
-        role: 'manager',
+        isLogin: false,
+        role: '',
         name: '',
         id: '',
     };
