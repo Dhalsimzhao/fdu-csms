@@ -27,8 +27,11 @@ define(function(require, exports, module) {
                         case 'profile':
                             self.getProfile();
                             break;
-                        case 'choosecourse':
-                            self.getStudentCourse();
+                        case 'studentunchoosedcourses':
+                            self.getStudentUnchoosedCourses();
+                            break;
+                        case 'studentchoosedcourses':
+                            self.getStudentChoosedCourses();
                             break;
                         // case 'getchoosedcourse':
                         //     self.getChoosedCourse();
@@ -94,21 +97,33 @@ define(function(require, exports, module) {
             this.$('.user-grade select').val(json.grade);
         },
 
-        getStudentCourse: function () {
+        getStudentUnchoosedCourses: function () {
             var self = this;
-            api.getStudentCourse({role: xk.role}).then(function (json) {
-                self.initStuCourseTable(json);
+            var data = {
+                studentNo: xk.id
+            };
+            api.studentGetUnchoosedCourses(data).then(function (courses) {
+                self.initUnchoosedCoursesTable(courses);
             });
         },
 
-        initStuCourseTable: function (json) {
+        getStudentChoosedCourses: function () {
             var self = this;
-            if (this.stuCourseTable) {
-                this.stuCourseTable.bootstrapTable('destroy');
+            var data = {
+                studentNo: xk.id
+            };
+            api.studentGetChoosedCourses(data).then(function (courses) {
+                self.initChoosedCoursesTable(courses);
+            });
+        },
+
+        initUnchoosedCoursesTable: function (courses) {
+            var self = this;
+            if (this.stuUnchoosedCoursesTable) {
+                this.stuUnchoosedCoursesTable.bootstrapTable('destroy');
             }
 
-            var $table = this.$('.course-choose-table');
-            this.stuCourseTable = $table;
+            var $table = this.$('.student-unchoosed-courses-table');
             var tableOptions = {
                 height: 500,
                 columns: [],
@@ -117,76 +132,180 @@ define(function(require, exports, module) {
 
             tableOptions.columns = [
                 {
-                    field: 'course_name',
+                    field: 'courseName',
                     title: '课程名称'
                 }, {
-                    field: 'course_size',
-                    title: '选课人数上限'
+                    field: 'courseNo',
+                    title: '课程代码'
                 }, {
-                    field: 'course_time',
-                    title: '上课时间'
+                    field: 'teacherName',
+                    title: '教师姓名'
                 },  {
-                    field: 'course_room',
-                    title: '教室'
-                }, 
-                // {
-                //     field: 'course_restriction_grade',
-                //     title: '年级限制'
-                // }, {
-                //     field: 'course_restriction_major',
-                //     title: '专业限制'
-                // }, 
-                {
-                    field: 'stucourse_status',
-                    title: '选/退课',
+                    field: 'courseCredits',
+                    title: '学分'
+                },  {
+                    field: 'coursePeriod',
+                    title: '学时'
+                }, {
+                    field: 'courseRestrictionGrade',
+                    title: '年级限制'
+                }, {
+                    field: 'courseRestrictionMajor',
+                    title: '专业限制'
+                }, {
+                    field: 'stucourseStatus',
+                    title: '',
                     formatter: function(value, row, index) {
                         var html;
-                        if (!value) {
-                            html ='<button class="btn btn-primary choose-course">选课</button>';
-                        } else {
-                            html ='<button class="btn btn-danger cancle-course">退课</button>';
-                        }
+                        html ='<button class="btn btn-primary choose-course">选课</button>';
                         return html;
                     },
                     events: {
                         'click .choose-course': function(e, value, row, index){
                             // console.log(arguments);
-                            self.chooseCourse().then(function () {
-                                row.stucourse_status = !row.stucourse_status;
-                                $table.bootstrapTable('updateRow', {index: index, row: row});
-                            });
-                        },
-                        'click .cancle-course': function(e, value, row, index){
-                            console.log(arguments);
-                            self.cancleCourse().then(function () {
-                                row.stucourse_status = !row.stucourse_status;
-                                $table.bootstrapTable('updateRow', {index: index, row: row});
+                            var data = {
+                                courseId: row.courseId,
+                                studentNo: xk.id,
+                            }
+                            self.chooseCourse(data).then(function () {
+                                $table.bootstrapTable('remove', {
+                                    field: 'courseNo',
+                                    values: [row.courseNo],
+                                });
                             });
                         }
                     }
                 }
             ];
 
-            for (var i = 0; i < json.data.length; i++) {
+            for (var i = 0; i < courses.length; i++) {
                 var data = {};
-                data.course_id = json.data[i].course_id;
-                data.course_name = json.data[i].course_name;
-                data.course_size = json.data[i].course_size;
-                data.course_time = json.data[i].course_time;
-                data.course_room = json.data[i].course_room;
-                data.stucourse_status = json.data[i].stucourse_status;
-                // data.course_restriction_grade = json.data[i].course_restriction_grade;
-                // data.course_restriction_major = json.data[i].course_restriction_major;
-
+                _.each(tableOptions.columns, function(column){
+                    data[column.field] = courses[i][column.field];
+                });
+                data.courseId = courses[i]['id'];
                 tableOptions.data.push(data);
             }
 
-            this.stuCourseTable = $table.bootstrapTable(tableOptions);
+            this.stuUnchoosedCoursesTable = $table.bootstrapTable(tableOptions);
         },
 
-        // getChoosedCourse: function () {
-            
-        // },
+        initChoosedCoursesTable: function (courses) {
+            var self = this;
+            if (this.stuChoosedCoursesTable) {
+                this.stuChoosedCoursesTable.bootstrapTable('destroy');
+            }
+
+            var $table = this.$('.student-choosed-courses-table');
+            var tableOptions = {
+                height: 500,
+                columns: [],
+                data: []
+            };
+
+            tableOptions.columns = [
+                {
+                    field: 'courseName',
+                    title: '课程名称'
+                }, {
+                    field: 'courseNo',
+                    title: '课程代码'
+                }, {
+                    field: 'teacherName',
+                    title: '教师姓名'
+                },  {
+                    field: 'courseCredits',
+                    title: '学分'
+                },  {
+                    field: 'coursePeriod',
+                    title: '学时'
+                }, {
+                    field: 'courseRestrictionGrade',
+                    title: '年级限制'
+                }, {
+                    field: 'courseRestrictionMajor',
+                    title: '专业限制'
+                }, {
+                    field: 'evaluationGrade',
+                    title: '评教结果',
+                    formatter: function(value, row, index) {
+                        var html;
+                        if (value == -1) {
+                            html = '未评教';
+                        } else {
+                            html = value;
+                        }
+                        return html;
+                    },
+                    editable: {
+                        type: 'text',
+                        title: '评教结果',
+                        validate: function (value, row, index) {
+                            value = +$.trim(value);
+                            if (isNaN(value) || value < 0) {
+                                return '请输入一个大于等于0的数字！';
+                            };
+                            var datas = $table.bootstrapTable('getData'),
+                                index = $(this).parents('tr').data('index'),
+                                data = datas[index];
+
+                            api.evaluateCourse({id: data.studentCourseId, grade: value}).then(function (studentCourse) {
+
+                                data.courseGrade = studentCourse.courseGrade;
+                                $table.bootstrapTable('updateRow', {index: index, row: data})
+                            });
+                        }
+                    }
+                }, {
+                    field: 'courseGrade',
+                    title: '课程成绩',
+                    formatter: function(value, row, index) {
+                        var res = '';
+                        if (value == -1) {
+                            res = '未录入';
+                        } else if (value == -2) {
+                            res = '未评教';
+                        } else {
+                            res = value;
+                        }
+                        return res;
+                    }
+                }, {
+                    field: 'dropCourse',
+                    title: '',
+                    formatter: function(value, row, index) {
+                        return '<button class="btn btn-danger cancle-course">退课</button>';
+                    },
+                    events: {
+                        'click .cancle-course': function(e, value, row, index){
+                            console.log(arguments);
+                            var data = {
+                                id: row.studentCourseId,
+                                courseId: row.courseId
+                            };
+                            self.cancleCourse(data).then(function () {
+                                $table.bootstrapTable('remove', {
+                                    field: 'courseNo',
+                                    values: [row.courseNo],
+                                });
+                            });
+                        }
+                    }
+                }
+            ];
+
+            for (var i = 0; i < courses.length; i++) {
+                var data = {};
+                _.each(tableOptions.columns, function(column){
+                    data[column.field] = courses[i][column.field];
+                });
+                data.courseId = courses[i]['id'];
+                data.studentCourseId = courses[i]['studentCourseId'];
+                tableOptions.data.push(data);
+            }
+
+            this.stuChoosedCoursesTable = $table.bootstrapTable(tableOptions);
+        },
 
         chooseCourse: function () {
             return api.chooseCourse();
@@ -198,12 +317,15 @@ define(function(require, exports, module) {
 
         genSchedule: function () {
             var self = this;
-            api.getStudentChoosedCourse().then(function (json) {
-                self.initScheduleTable(json);
+            var data = {
+                studentNo: xk.id
+            };
+            api.studentGetChoosedCourses(data).then(function (courses) {
+                self.initScheduleTable(courses);
             });
         },
 
-        initScheduleTable: function (json) {
+        initScheduleTable: function (courses) {
             var self = this;
             if (this.stuCourseTable) {
                 this.stuCourseTable.bootstrapTable('destroy');
@@ -217,45 +339,75 @@ define(function(require, exports, module) {
                 data: []
             };
 
+            function scheduleFormatter (value, row, index) {
+                if (value) {
+                    var html = [];
+                    html.push('<div class="course-name schedule-detail">' + row.course_name + '</div>');
+                    html.push('<br/>');
+                    html.push('<div class="course-room schedule-detail">' + row.course_room + '</div>');
+                    return html.join('');
+                } else {
+                    return '<div class="course-room schedule-detail">-</div>';
+                }
+                
+            }
+
             tableOptions.columns = [
                 {
                     field: 'section',
                     title: '节次'
                 }, {
                     field: 'wd1',
-                    title: '周一'
+                    title: '周一',
+                    formatter: function (value, row, index) {
+                        return scheduleFormatter.apply(null, arguments);
+                    }
                 }, {
                     field: 'wd2',
-                    title: '周二'
+                    title: '周二',
+                    formatter: function (value, row, index) {
+                        return scheduleFormatter.apply(null, arguments);
+                    }
                 }, {
                     field: 'wd3',
-                    title: '周三'
+                    title: '周三',
+                    formatter: function (value, row, index) {
+                        return scheduleFormatter.apply(null, arguments);
+                    }
                 }, {
                     field: 'wd4',
-                    title: '周四'
+                    title: '周四',
+                    formatter: function (value, row, index) {
+                        return scheduleFormatter.apply(null, arguments);
+                    }
                 }, {
                     field: 'wd5',
-                    title: '周五'
+                    title: '周五',
+                    formatter: function (value, row, index) {
+                        return scheduleFormatter.apply(null, arguments);
+                    }
                 }
             ];
 
-            var courses = [];
-            for (var i = 0; i < json.data.length; i++) {
-                var course = json.data[i];
-                for (var j = 0; j < course.course_time.length; j++) {
-                    var time = course.course_time[j];
+            var scheduleCourses = [];
+            for (var i = 0; i < courses.length; i++) {
+                var course = courses[i];
+                for (var j = 0; j < course.roomDetails.length; j++) {
+                    var roomDetail = course.roomDetails[j];
+                    var time = roomDetail.roomTime;
                     var wd = time.substring(0, 1),
                         section = time.substring(1);
-                    courses.push({
-                        course_name: course.course_name,
+                    scheduleCourses.push({
+                        course_name: course.courseName,
                         course_time: time,
                         course_wd: wd,
-                        course_section: section
+                        course_section: section,
+                        course_room: roomDetail.building
                     });
                 }
             }
 
-            var groupedCourses = _.groupBy(courses, function(course){
+            var groupedCourses = _.groupBy(scheduleCourses, function(course){
                 return course.course_section;
             });
 
@@ -274,6 +426,8 @@ define(function(require, exports, module) {
                 for (var j = 0; j < groupedCourse.length; j++) {
                     var wd = groupedCourse[j]['course_wd'];
                     row['wd' + (wds.indexOf(wd) + 1)] = groupedCourse[j]['course_name'];
+                    row.course_name = groupedCourse[j]['course_name'];
+                    row.course_room = groupedCourse[j]['course_room']
                 }
                 rows.push(row);
             }

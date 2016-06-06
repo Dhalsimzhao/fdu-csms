@@ -266,7 +266,7 @@ define(function(require, exports, module) {
                     field: 'courseGrade',
                     title: '成绩',
                     formatter: function (value) {
-                        return value === -1 ? '无成绩' : value;
+                        return value == -1 ? '无成绩' : value;
                     },
                     editable: {
                         type: 'text',

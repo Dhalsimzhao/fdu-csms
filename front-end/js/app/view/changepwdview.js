@@ -32,6 +32,10 @@ define(function(require, exports, module) {
             return {
                 'click .changepwd-btn': this._changepwd,
                 'click .cancel-btn': this._cancel,
+                'click .login-code': function (e) {
+                    var $e = $(e.currentTarget);
+                    $e.attr('src', $e.attr('src') + '?' + Math.random());
+                }
             }
         },
 

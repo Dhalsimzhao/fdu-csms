@@ -139,3 +139,11 @@ table button.btn {
 .ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content{
 	z-index: 999999999999999;
 }
+
+.schedule-detail {
+	text-align: center;
+}
+
+.stucourse-schedule th{
+	width: 100px;
+}

@@ -32,6 +32,10 @@ define(function(require, exports, module) {
             return {
                 'change .user-role select': this._onRoleChange,
                 'click .login-btn': this._login,
+                'click .login-code': function (e) {
+                    var $e = $(e.currentTarget);
+                    $e.attr('src', $e.attr('src') + '?' + Math.random());
+                }
             }
         },
 
@@ -59,7 +63,6 @@ define(function(require, exports, module) {
                 role: role
             };
             
-            console.log(data);
             api.login(data).then(function(user){
                 api.getRole().then(function (user) {
                     // xk.isLogin = true;

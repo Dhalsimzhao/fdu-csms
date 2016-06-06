@@ -513,13 +513,13 @@ define(function(require, exports, module) {
                     field: 'evaluationGrade',
                     title: '评教结果',
                     formatter: function (value) {
-                        return value === -1 ? '未评教' : value;
+                        return value == -1 ? '未评教' : value;
                     }
                 }, {
                     field: 'courseGrade',
                     title: '成绩',
                     formatter: function (value) {
-                        return value === -1 ? '暂无成绩' : value;
+                        return value == -1 ? '暂无成绩' : value;
                     }
                 }
             ];
@@ -696,13 +696,13 @@ define(function(require, exports, module) {
                     field: 'evaluationGrade',
                     title: '评教结果',
                     formatter: function (value) {
-                        return value === -1 ? '未评教' : value;
+                        return value == -1 ? '未评教' : value;
                     }
                 }, {
                     field: 'courseGrade',
                     title: '课程成绩',
                     formatter: function (value) {
-                        return value === -1 ? '暂无成绩' : value;
+                        return value == -1 ? '暂无成绩' : value;
                     }
                 }
             ]

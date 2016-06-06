@@ -529,41 +529,180 @@ define(function(require, exports, module){
     }
 
     // student api
-    API.prototype.getStudentCourse = function() {
+    API.prototype.studentGetUnchoosedCourses = function(data) {
         if (debug) {
-            return this.fake({
-                data: [
-                    {
-                        course_id: 'id1',
-                        course_name: '课程名称1',
-                        course_size: 40,
-                        course_time: ['A2', 'D7'],
-                        course_room: '250',
-                        stucourse_status: 0
-                    },
-                    {
-                        course_id: 'id2',
-                        course_name: '课程名称2',
-                        course_size: 30,
-                        course_time: ['A4', 'B2'],
-                        course_room: '052',
-                        stucourse_status: 1
-                    },
-                ]
-            });
+            return this.fake([
+                {
+                    "id": 401,
+                    "courseRestrictionGrade": "1,2,4",
+                    "coursePeriod": 64,
+                    "roomDetails": [
+                        {
+                            "roomNo": "2101",
+                            "roomTime": "A5",
+                            "building": "No.2 Teaching Building",
+                            "roomDetail": "A5@Handan-No.2 Teaching Building-2101",
+                            "campus": "Handan"
+                        },
+                        {
+                            "roomNo": "2101",
+                            "roomTime": "A6",
+                            "building": "No.2 Teaching Building",
+                            "roomDetail": "A6@Handan-No.2 Teaching Building-2101",
+                            "campus": "Handan"
+                        },
+                        {
+                            "roomNo": "2104",
+                            "roomTime": "D1",
+                            "building": "No.2 Teaching Building ",
+                            "roomDetail": "D1@Zhangjiang-No.2 Teaching Building -2104",
+                            "campus": "Zhangjiang"
+                        }
+                    ],
+                    "courseNo": "111",
+                    "courseCredits": 3,
+                    "courseSize": 22,
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseEnrollment": 180,
+                    "teacherName": "Lori Nichol",
+                    "courseName": "语言文化"
+                },
+                {
+                    "id": 1201,
+                    "courseRestrictionGrade": "1,2,4",
+                    "coursePeriod": 64,
+                    "roomDetails": [
+                        {
+                            "roomNo": "2102",
+                            "roomTime": "D1",
+                            "building": "No.2 Teaching Building ",
+                            "roomDetail": "D1@Zhangjiang-No.2 Teaching Building -2102",
+                            "campus": "Zhangjiang"
+                        }
+                    ],
+                    "courseNo": "222",
+                    "courseCredits": 3,
+                    "courseSize": 111,
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseEnrollment": 1,
+                    "teacherName": "Shae-lynn Bourne",
+                    "courseName": "时间重复测试"
+                }
+            ]);
         } else {
             var def = $.Deferred();
-            var url = '/teachercourse';
-            $.get(url, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.student);
-                } else {
-                    alert(json.reason);
-                    def.reject();
+            var url = this._urlprefix + '/student/BrowseCourse';
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }, function(err){
-                def.reject(err);
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.studentGetChoosedCourses = function(data) {
+        if (debug) {
+            return this.fake([
+                {
+                    "id": 401,
+                    "studentCourseId": 1305,
+                    "courseRestrictionGrade": "1,2,4",
+                    "coursePeriod": 64,
+                    "roomDetails": [
+                        {
+                            "roomNo": "2101",
+                            "roomTime": "A5",
+                            "building": "No.2 Teaching Building",
+                            "roomDetail": "A5@Handan-No.2 Teaching Building-2101",
+                            "campus": "Handan"
+                        },
+                        {
+                            "roomNo": "2101",
+                            "roomTime": "A6",
+                            "building": "No.2 Teaching Building",
+                            "roomDetail": "A6@Handan-No.2 Teaching Building-2101",
+                            "campus": "Handan"
+                        },
+                        {
+                            "roomNo": "2104",
+                            "roomTime": "D1",
+                            "building": "No.2 Teaching Building ",
+                            "roomDetail": "D1@Zhangjiang-No.2 Teaching Building -2104",
+                            "campus": "Zhangjiang"
+                        }
+                    ],
+                    "courseNo": "111",
+                    "courseCredits": 3,
+                    "courseSize": 22,
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseEnrollment": 180,
+                    "teacherName": "Lori Nichol",
+                    "courseName": "语言文化",
+                    "evaluationGrade": "70",
+                    "courseGrade": "100"
+                },
+                {
+                    "id": 1201,
+                    "studentCourseId": 1306,
+                    "courseRestrictionGrade": "1,2,4",
+                    "coursePeriod": 64,
+                    "roomDetails": [
+                        {
+                            "roomNo": "2102",
+                            "roomTime": "D1",
+                            "building": "No.2 Teaching Building ",
+                            "roomDetail": "D1@Zhangjiang-No.2 Teaching Building -2102",
+                            "campus": "Zhangjiang"
+                        }
+                    ],
+                    "courseNo": "222",
+                    "courseCredits": 3,
+                    "courseSize": 111,
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseEnrollment": 1,
+                    "teacherName": "Shae-lynn Bourne",
+                    "courseName": "时间重复测试",
+                    "evaluationGrade": "70",
+                    "courseGrade": '-1'
+                }
+            ]);
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/student/ListCourse';
+
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
             });
 
             return def.promise();
@@ -573,29 +712,35 @@ define(function(require, exports, module){
     API.prototype.chooseCourse = function(data) {
         if (debug) {
             return this.fake({
-                
+                "updateDate": "1464445048000",
+                "courseGrade": "0",
+                "studentNo": "2012002002",
+                "id": "1801",
+                "evaluationGrade": -1,
+                "courseId": "701",
+                "createDate": "1464445048000"
             });
         } else {
             var def = $.Deferred();
-            var url = '/choosecourse';
+            var url = this._urlprefix + '/student/SelectCourse';
 
-            var data = {
-                name: '陈博',
-                gender: 'F',
-                grade: function () {
-                    return xxx.grade;
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.studentCourse);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
                 }
-            }
-            $.get(url, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.student);
-                } else {
-                    alert(json.reason);
-                    def.reject();
-                }
-            }, function(err){
-                def.reject(err);
             });
 
             return def.promise();
@@ -609,72 +754,67 @@ define(function(require, exports, module){
            });
        } else {
            var def = $.Deferred();
-           var url = '/canclecourse';
-           $.get(url, function(data){
-               var res = checkResponse(json);
-               if (res) {
-                   def.resolve(json.student);
-               } else {
-                   alert(json.reason);
-                   def.reject();
+           var url = this._urlprefix + '/student/DropCourse';
+           $.ajax({
+               url: url,
+               data: data,
+               method: 'GET',
+               success: function (json) {
+                   var res = checkResponse(json);
+                   if (res) {
+                       def.resolve(json);
+                   } else {
+                       alert(json.reason);
+                       def.reject();
+                   }
+               },
+               error: function (err) {
+                   console.log(err);
+                   def.reject(err);
                }
-           }, function(err){
-               def.reject(err);
+           });
+
+           return def.promise();
+       }
+    }
+
+    API.prototype.evaluateCourse = function(data) {
+       if (debug) {
+           return this.fake({
+                "updateDate": "1464503692000",
+                "courseGrade": "0",
+                "studentNo": "2013001004",
+                "id": "2301",
+                "evaluationGrade": "70",
+                "courseId": "701",
+                "createDate": "1464503692000"
+            });
+       } else {
+           var def = $.Deferred();
+           var url = this._urlprefix + '/student/EvaluateCourse';
+           $.ajax({
+               url: url,
+               data: data,
+               method: 'GET',
+               success: function (json) {
+                   var res = checkResponse(json);
+                   if (res) {
+                       def.resolve(json.studentCourse);
+                   } else {
+                       alert(json.reason);
+                       def.reject();
+                   }
+               },
+               error: function (err) {
+                   console.log(err);
+                   def.reject(err);
+               }
            });
 
            return def.promise();
        }
     }
     
-    API.prototype.getStudentChoosedCourse = function() {
-        if (debug) {
-            return this.fake({
-                data: [
-                    {
-                        course_id: 'id1',
-                        course_name: '课程名称1',
-                        course_size: 60,
-                        course_time: ['A2', 'D7'],
-                        course_restriction_grade: [1, 2],
-                        course_restriction_major: ['major_a', 'major_x'],
-                    },
-                    {
-                        course_id: 'id2',
-                        course_name: '课程名称2',
-                        course_size: 59,
-                        course_time: ['B4', 'E5'],
-                        course_restriction_grade: [3],
-                        course_restriction_major: ['major_d', 'major_c'],
-                    },
-                    {
-                        course_id: 'id3',
-                        course_name: '课程名称3',
-                        course_size: 59,
-                        course_time: ['C10', 'D3'],
-                        course_restriction_grade: [3],
-                        course_restriction_major: ['major_d', 'major_c'],
-                    }
-                ]
-            });
-        } else {
-            var def = $.Deferred();
-            var url = '/stuchoosedcourse';
-            $.get(url, function(data){
-                var res = checkResponse(json);
-                if (res) {
-                    def.resolve(json.student);
-                } else {
-                    alert(json.reason);
-                    def.reject();
-                }
-            }, function(err){
-                def.reject(err);
-            });
-
-            return def.promise();
-        }
-    }
-
     // manager api
     API.prototype.getUncommitedCourse = function() {
         if (debug) {
