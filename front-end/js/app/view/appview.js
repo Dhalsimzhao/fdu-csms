@@ -37,6 +37,7 @@ define(function(require, exports, module) {
         _logout: function(){
             api.logout().then(function(){
                 xk.role = '';
+                xk.id = '';
                 xk.isLogin = false;
                 appRouter.goto('login');
             });

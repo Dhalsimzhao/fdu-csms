@@ -236,10 +236,103 @@ define(function(require, exports, module){
     }
     
     // teacher api
-    API.prototype.createCourse = function(data) {
+    
+    API.prototype.teacherGetPenddingCourses = function(data) {
+        if (debug) {
+            return this.fake([
+                {
+                    "updateDate": "2016-05-22 13:45:02.0",
+                    "courseSize": 200,
+                    "teacherNo": "10000",
+                    "courseRestrictionGrade": "1,2,4",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化1",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PENDING",
+                    "courseEnrollment": 2,
+                    "id": 401,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A5,A6,B4,E8",
+                    "createDate": "2016-05-29 14:28:08.0"
+                },
+                {
+                    "updateDate": "2016-05-22 13:45:35.0",
+                    "courseSize": 160,
+                    "teacherNo": "10002",
+                    "courseRestrictionGrade": "1,2,4",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化2",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PENDING",
+                    "courseEnrollment": 0,
+                    "id": 501,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A5,A6,B4,E8",
+                    "createDate": "2016-05-28 19:05:03.0"
+                },
+                {
+                    "updateDate": "2016-05-22 13:45:02.0",
+                    "courseSize": 2,
+                    "teacherNo": "10000",
+                    "courseRestrictionGrade": "1,2",
+                    "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                    "courseName": "语言文化3",
+                    "courseCredits": 3,
+                    "coursePeriod": 64,
+                    "courseStatus": "PENDING",
+                    "courseEnrollment": 0,
+                    "id": 601,
+                    "deadline": "2016-07-01 00:00:00.0",
+                    "applyTime": "A1,A2,B1,E1",
+                    "createDate": "2016-05-28 19:05:03.0"
+                }
+            ]);
+        } else {
+            var def = $.Deferred();
+            var url = this._urlprefix + '/course/New';
+            
+            $.ajax({
+                url: url,
+                data: data,
+                method: 'GET',
+                success: function (json) {
+                    var res = checkResponse(json);
+                    if (res) {
+                        def.resolve(json.course);
+                    } else {
+                        alert(json.reason);
+                        def.reject();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    def.reject(err);
+                }
+            });
+
+            return def.promise();
+        }
+    }
+
+    API.prototype.newCourse = function(data) {
         if (debug) {
             return this.fake({
-                
+                "updateDate": "1464521046000",
+                "courseSize": "3",
+                "teacherNo": "",
+                "courseRestrictionGrade": "1,2",
+                "courseRestrictionMajor": "Chinese Language and Literature,Foreign Language and Literature",
+                "courseCredits": "3",
+                "coursePeriod": "64",
+                "name": "Korean History",
+                "courseEnrollment": "0",
+                "id": "2401",
+                "deadline": "2016-01-01 00:00:00.0",
+                "applyTime": "C1,C2,C3,C4",
+                "status": "PENDING",
+                "createDate": "1464521046000"
             });
         } else {
             var def = $.Deferred();
@@ -268,10 +361,16 @@ define(function(require, exports, module){
         }
     }
 
-    API.prototype.submitScore = function() {
+    API.prototype.submitScore = function(data) {
         if (debug) {
             return this.fake({
-                
+                "updateDate": "1464522089000",
+                "courseGrade": "85",
+                "studentNo": "2013001004",
+                "id": "2301",
+                "evaluationGrade": "70",
+                "courseId": "701",
+                "createDate": "1464522089000"
             });
         } else {
             var def = $.Deferred();
@@ -284,7 +383,7 @@ define(function(require, exports, module){
                 success: function (json) {
                     var res = checkResponse(json);
                     if (res) {
-                        def.resolve(json);
+                        def.resolve(json.studentCourse);
                     } else {
                         alert(json.reason);
                         def.reject();
@@ -300,7 +399,7 @@ define(function(require, exports, module){
         }
     }
 
-    API.prototype.getTeacherCourse = function() {
+    API.prototype.teacherGetPassedCourses = function(data) {
         if (debug) {
             return this.fake([
                 {
@@ -328,7 +427,7 @@ define(function(require, exports, module){
                     "courseName": "语言文化2",
                     "courseCredits": 3,
                     "coursePeriod": 64,
-                    "courseStatus": "REJECTED",
+                    "courseStatus": "PASSED",
                     "courseEnrollment": 0,
                     "id": 501,
                     "deadline": "2016-07-01 00:00:00.0",
@@ -379,7 +478,7 @@ define(function(require, exports, module){
         }
     }
     
-    API.prototype.getCourseStudents = function(courseId) {
+    API.prototype.teacherGetCourseStudents = function(courseId) {
         if (debug) {
             return this.fake([
                 {
@@ -942,7 +1041,7 @@ define(function(require, exports, module){
             ]);
         } else {
             var def = $.Deferred();
-            var url = '/manager/StudentList';
+            var url = this._urlprefix + '/manager/StudentList';
 
             $.ajax({
                 url: url,
@@ -1052,56 +1151,13 @@ define(function(require, exports, module){
                 data: {studentNo: studentNo},
                 method: 'GET',
                 success: function (json) {
+                    var res = checkResponse(json);
                     if (res) {
                         def.resolve(json.studentCourse);
                     } else {
                         alert(json.reason);
                         def.reject();
                     }
-                },
-                error: function (err) {
-                    console.log(err);
-                    def.reject(err);
-                }
-            });
-
-            return def.promise();
-        }
-    }
-
-    API.prototype.getAllStuCourse = function(data) {
-        if (debug) {
-            return this.fake({
-                data: [
-                    {
-                        stu_id: 'sid1',
-                        stu_name: '学生姓名1',
-                        course_name: '课程名称1',
-                        course_stuscore: 60,
-                    },
-                    {
-                        stu_id: 'sid1',
-                        stu_name: '学生姓名1',
-                        course_name: '课程名称2',
-                        course_stuscore: 90,
-                    },
-                    {
-                        stu_id: 'sid2',
-                        stu_name: '学生姓名2',
-                        course_name: '课程名称4',
-                        course_stuscore: 80,
-                    }
-                ]
-            });
-        } else {
-            var def = $.Deferred();
-            var url = '/stucourse';
-            $.ajax({
-                url: '',
-                data: data,
-                method: 'GET',
-                success: function (json) {
-                    def.resolve(data);
                 },
                 error: function (err) {
                     console.log(err);

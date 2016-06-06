@@ -9,6 +9,7 @@ define(function(require, exports, module) {
         execute: function(callback, args, name) {
             // console.log('router execute');
             if (!xk.role) {
+            // if (!xk.id) {
                 var self = this;
                 this.getRole().then(function(data){
                     if (!data.isLogin) {

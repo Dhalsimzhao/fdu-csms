@@ -112,3 +112,30 @@ table button.btn {
 	width: auto;
 	margin-right: 15px;
 }
+
+.course-time-list {
+	overflow: hidden;
+	margin-top: 10px;
+}
+.course-time-list .course-time{
+	overflow: hidden;
+	margin-top: 5px;
+}
+.course-time {
+	
+}
+.course-time select{
+	display: inline-block;
+	width: 70px;
+	margin-right: 15px;
+}
+.course-time .time-part{
+	float: left;
+}
+.remove-course-time{
+	margin-top: 6px;
+}
+
+.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content{
+	z-index: 999999999999999;
+}

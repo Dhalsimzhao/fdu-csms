@@ -27,14 +27,14 @@ define(function(require, exports, module) {
                         act = $e.attr('act');
 
                     switch(act){
-                        case 'profile':
-                            self.getProfile();
+                        // case 'profile':
+                        //     self.getProfile();
+                        //     break;
+                        case 'teacherpendingcourses':
+                            self.getPendingCourses();
                             break;
-                        case 'createcourse':
-                            self.showCreateCourse();
-                            break;
-                        case 'getteachercourse':
-                            self.getTeacherCourse();
+                        case 'teacherpassedcourses':
+                            self.getPassedCourses();
                             break;
                         default:
                             ;
@@ -45,10 +45,8 @@ define(function(require, exports, module) {
 
         events: function () {
             return {
-                'click .change-pwd': function(){
-                    appRouter.goto('changepwd');
-                },
-                'click .apply-btn': this.createCourse,
+                'click .add-course': this._addCourse,
+                'click .confirm-new-course': this.newCourse
             }
         },
 
@@ -63,14 +61,108 @@ define(function(require, exports, module) {
             this.$('a[data-toggle="tab"]').eq(0).click();
         },
 
-        _initTeacherCourse: function (courses) {
+        // init modal
+        _addCourse: function () {
             var self = this;
-            if (this.teacherCourseTable) {
-                this.teacherCourseTable.bootstrapTable('destroy');
+            if (!this._initedNewCourseModal) {
+                // var $select = this.$('.new-student-modal').find('.user-major select');
+                // var majors = enums.major;
+                // _.each(majors, function (major) {
+                //     $select.append('<option value="'+major+'">'+major+'</option>');
+                // });
+                var $addTimeBtn = this.$('.new-course-modal').find('.add-apply-time');
+                $addTimeBtn.click(function (e) {
+                    e.preventDefault();
+                    var $courseTime = $('.course-time-picker-template').clone().removeClass('course-time-picker-template').show();
+                    self.$('.course-time-list').append($courseTime);
+                    $courseTime.find('select').val('');
+                });
+
+                $(document).on('click', '.course-time .remove-course-time', function (e) {
+                    var $e = $(e.currentTarget);
+                    var times = $('.course-time-list .course-time');
+                    if (times.length === 1) {
+                        alert('至少保留一个时间！');
+                    } else {
+                        $e.closest('.course-time-picker-template').remove();
+                    }
+                });
+
+                
+                this._initedNewCourseModal = true;
+            }
+            var $courseTime = $('.course-time-picker-template').clone().removeClass('course-time-picker-template').show();
+            $courseTime.find('select').val('');
+            this.$('.course-time-list').empty().append($courseTime);
+            this.$('.new-course-modal').find('select, input:not(.tokenfield-input)').val('');
+            this._initNewCoursePanel();
+            this.$('.new-course-modal').modal('show');
+        },
+
+        _initPendingCoursesTable: function (courses) {
+            var self = this;
+            if (this.teacherPendingCourseTable) {
+                this.teacherPendingCourseTable.bootstrapTable('destroy');
             }
 
             // init table
-            var $table = this.$('.teacher-courses-table');
+            var $table = this.$('.teacher-pending-courses-table');
+            var tableOptions = {
+                height: 500,
+                columns: [],
+                data: []
+            };
+            tableOptions.columns = [
+                {
+                    field: 'courseName',
+                    title: '课程名称'
+                }, {
+                    field: 'courseSize',
+                    title: '人数上限'
+                }, {
+                    field: 'courseRestrictionGrade',
+                    title: '年级限制'
+                }, {
+                    field: 'courseRestrictionMajor',
+                    title: '专业限制'
+                }, {
+                    field: 'courseCredits',
+                    title: '学分'
+                }, {
+                    field: 'coursePeriod',
+                    title: '学时'
+                }, {
+                    field: 'courseStatus',
+                    title: '审核状态'
+                }, {
+                    field: 'applyTime',
+                    title: '上课时间',
+                    formatter: function (times) {
+                        return util.parseTimesToHtml(times);
+                    }
+                }
+            ];
+
+            for (var i = 0; i < courses.length; i++) {
+                var data = {};
+                _.each(tableOptions.columns, function(column){
+                    data[column.field] = courses[i][column.field];
+                });
+                data.courseId = courses[i]['id'];
+                tableOptions.data.push(data);
+            }
+            
+            this.teacherPendingCourseTable = $table.bootstrapTable(tableOptions);
+        },
+
+        _initPassedCoursesTable: function (courses) {
+            var self = this;
+            if (this.teacherPassedCourseTable) {
+                this.teacherPassedCourseTable.bootstrapTable('destroy');
+            }
+
+            // init table
+            var $table = this.$('.teacher-passed-courses-table');
             var tableOptions = {
                 height: 500,
                 columns: [],
@@ -137,7 +229,7 @@ define(function(require, exports, module) {
                 tableOptions.data.push(data);
             }
             
-            this.teacherCourseTable = $table.bootstrapTable(tableOptions);
+            this.teacherPassedCourseTable = $table.bootstrapTable(tableOptions);
         },
 
         _initCourseStudensTable: function (students) {
@@ -177,7 +269,7 @@ define(function(require, exports, module) {
                     field: 'courseGrade',
                     title: '成绩',
                     formatter: function (value) {
-                        return value === -1 ? '暂无成绩' : value;
+                        return value === -1 ? '无成绩' : value;
                     },
                     editable: {
                         type: 'text',
@@ -185,7 +277,7 @@ define(function(require, exports, module) {
                         validate: function (value, row, index) {
                             value = +$.trim(value);
                             if (isNaN(value) || value < 0) {
-                                return '请输入一个大于0的数字！';
+                                return '请输入一个大于等于0的数字！';
                             };
                             var datas = $table.bootstrapTable('getData'),
                                 index = $(this).parents('tr').data('index'),
@@ -224,7 +316,7 @@ define(function(require, exports, module) {
             this.$('.user-gender select').val(json.gender.toLowerCase());
         },
 
-        showCreateCourse: function () {
+        _initNewCoursePanel: function () {
             var self = this;
             // init field tokens
             if (!this._initedTokenField) {
@@ -263,7 +355,19 @@ define(function(require, exports, module) {
             }
         },
 
-        createCourse: function (e) {
+        getPendingCourses: function () {
+            var self = this;
+            var data = {
+                teacherNo: xk.id,
+                status: 'PENDING'
+            };
+            api.teacherGetPenddingCourses(data).then(function (courses) {
+                self._initPendingCoursesTable(courses);
+            });
+        },
+
+        newCourse: function (e) {
+            var self = this;
             e.preventDefault();
             var restrictionGrades = this.$('.restriction-grade').tokenfield('getTokens');
             var restrictionMajors = this.$('.restriction-major').tokenfield('getTokens');
@@ -274,15 +378,30 @@ define(function(require, exports, module) {
                 courseSize: this.$('.course-size input').val(),
                 courseCredits: this.$('.course-credit input').val(),
                 coursePeriod: this.$('.course-period input').val(),
-                applyTime: ['A3', 'D4'], // todo~~
-                courseRestrictionGrade: _.pluck(restrictionGrades, 'value'),
-                courseRestrictionMajor: _.pluck(restrictionMajors, 'value')
+                applyTime: this._getApplyTime(), // todo~~
+                courseRestrictionGrade: _.pluck(restrictionGrades, 'value').join(','),
+                courseRestrictionMajor: _.pluck(restrictionMajors, 'value').join(',')
             };
 
             console.log(data);
-            api.createCourse(data).then(function () {
-                alert('提交成功');
+            api.newCourse(data).then(function () {
+                self.$('.new-course-modal').modal('hide');
+
             });
+        },
+
+        _getApplyTime: function () {
+            var $times = this.$('.course-time-list .course-time');
+            var times = [];
+            $times.each(function (index, e) {
+                var $time = $(this);
+                var wd = $time.find('.weekday select').val();
+                var sc = $time.find('.section select').val();
+                var time = wd + sc;
+                times.push(time);
+            });
+            times = _.uniq(times);
+            return times.join(',');
         },
 
         submitScore: function(data) {
@@ -292,17 +411,21 @@ define(function(require, exports, module) {
             });
         },
 
-        getTeacherCourse: function () {
+        getPassedCourses: function () {
             var self = this;
-            api.getTeacherCourse().then(function (course) {
-                self._initTeacherCourse(course);
+            var data = {
+                teacherNo: xk.id,
+                status: 'PASSED'
+            };
+            api.teacherGetPassedCourses(data).then(function (course) {
+                self._initPassedCoursesTable(course);
             });
         },
 
         getCourseStudents: function (courseId) {
             var self = this;
             var def = $.Deferred();
-            api.getCourseStudents(courseId).then(function (students) {
+            api.teacherGetCourseStudents(courseId).then(function (students) {
                 def.resolve(students);
             });
 

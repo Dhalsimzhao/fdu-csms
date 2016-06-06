@@ -92,7 +92,17 @@ define(function(require, exports, module) {
                     },
                 }, {
                     field: 'courseSize',
-                    title: '选课人数上限'
+                    title: '选课人数上限',
+                    editable: {
+                        type: 'text',
+                        title: '请输入人数上限',
+                        validate: function (value, row, index) {
+                            value = +$.trim(value);
+                            if (isNaN(value) || value <= 0) {
+                                return '请输入一个大于0的数字！';
+                            };
+                        }
+                    },
                 }, {
                     field: 'applyTime',
                     title: '上课时间',
@@ -722,13 +732,6 @@ define(function(require, exports, module) {
             });
         },
 
-        getAllStuCourse: function () {
-            var self = this;
-            api.getAllStuCourse().then(function (json) {
-                self._initAllStuCourse(json);
-            });
-        },
-
         assignRoomByTime: function (roomTime) {
             var def = $.Deferred();
             api.assignRoom({roomTime: roomTime}).then(function (rooms) {
@@ -849,7 +852,7 @@ define(function(require, exports, module) {
         managerGetStudentCourses: function (studentNo) {
             var self = this;
             var def = $.Deferred();
-            api.managerGetStudentCourses().then(function (courses) {
+            api.managerGetStudentCourses(studentNo).then(function (courses) {
                 def.resolve(courses);
             });
 

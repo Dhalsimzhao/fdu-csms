@@ -120,10 +120,10 @@
                         <a href="#teacher_profile" aria-controls="teacher_profile" role="tab" data-toggle="tab" act="profile">个人信息</a>
                     </li> -->
                     <li role="presentation">
-                        <a href="#createcourse" aria-controls="createcourse" role="tab" data-toggle="tab" act="createcourse">开设课程</a>
+                        <a href="#teacherpendingcourses" aria-controls="teacherpendingcourses" role="tab" data-toggle="tab" act="teacherpendingcourses">待审核课程</a>
                     </li>
                     <li role="presentation">
-                        <a href="#getteachercourse" aria-controls="getteachercourse" role="tab" data-toggle="tab" act="getteachercourse">查看选课名单</a>
+                        <a href="#teacherpassedcourses" aria-controls="teacherpassedcourses" role="tab" data-toggle="tab" act="teacherpassedcourses">已审核课程</a>
                     </li>
                 </ul>
 
@@ -150,71 +150,105 @@
                             </form>
                         </div>
                     </div> -->
-                    <div role="tabpanel" class="tab-pane" id="createcourse">
-                        <div class="profile-container">
-                            <form>
-                                <div class="form-group course-name">
-                                    <label for="name">课程名称</label>
-                                    <input type="text" class="form-control" />
-                                </div>
-                                <div class="form-group course-size">
-                                    <label for="size">选课人数上限</label>
-                                    <input type="number" class="form-control" />
-                                </div>
-                                <div class="form-group course-credit">
-                                    <label for="credit">学分</label>
-                                    <input type="number" class="form-control" />
-                                </div>
-                                <div class="form-group course-period">
-                                    <label for="period">学时</label>
-                                    <input type="number" class="form-control" />
-                                </div>
-                                <div class="form-group course-time">
-                                    <label for="period">上课时间</label>
-                                    <div class="course-time-picker">
-                                        <div class="weekday">
-                                            <label for="weekday">星期</label>
-                                            <select class="form-control" name="weekday">
-                                                <option value="A">一</option>
-                                                <option value="B">二</option>
-                                                <option value="C">三</option>
-                                                <option value="D">四</option>
-                                                <option value="E">五</option>
-                                            </select>
-                                        </div>
-                                        <div class="section">
-                                            <label for="section">节次</label>
-                                            <select class="form-control" name="section">
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
-                                                <option value="8">8</option>
-                                                <option value="9">9</option>
-                                                <option value="10">10</option>
-                                                <option value="11">11</option>
-                                            </select>
+                    <div role="tabpanel" class="tab-pane" id="teacherpendingcourses">
+                        <div class="toolbar">
+                            <button class="add-course btn btn-primary">
+                                <i class="glyphicon glyphicon-plus"></i> 新建课程
+                            </button>
+                        </div>
+                        <div class="modal fade new-course-modal" tabindex="-1" role="dialog" style="display: none;">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title">新建课程</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <div class="form-group course-name">
+                                                    <label for="name">课程名称</label>
+                                                    <input type="text" class="form-control" />
+                                                </div>
+                                                <div class="form-group course-size">
+                                                    <label for="size">选课人数上限</label>
+                                                    <input type="number" class="form-control" />
+                                                </div>
+                                                <div class="form-group course-credit">
+                                                    <label for="credit">学分</label>
+                                                    <input type="number" class="form-control" />
+                                                </div>
+                                                <div class="form-group course-period">
+                                                    <label for="period">学时</label>
+                                                    <input type="number" class="form-control" />
+                                                </div>
+                                                <div class="form-group course-time">
+                                                    <label for="period">上课时间</label>
+                                                    <button class="btn btn-xs btn-primary add-apply-time">
+                                                        <i class="glyphicon glyphicon-plus"></i>增加时间
+                                                    </button>
+                                                    <div class="course-time-picker-template course-time" style="display:none;">
+                                                        <div class="weekday time-part">
+                                                            <label for="weekday">星期</label>
+                                                            <select class="form-control" name="weekday">
+                                                                <option value="A">一</option>
+                                                                <option value="B">二</option>
+                                                                <option value="C">三</option>
+                                                                <option value="D">四</option>
+                                                                <option value="E">五</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="section time-part">
+                                                            <label for="section">节次</label>
+                                                            <select class="form-control" name="section">
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                                <option value="4">4</option>
+                                                                <option value="5">5</option>
+                                                                <option value="6">6</option>
+                                                                <option value="7">7</option>
+                                                                <option value="8">8</option>
+                                                                <option value="9">9</option>
+                                                                <option value="10">10</option>
+                                                                <option value="11">11</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="remove-course-time time-part">
+                                                            <button class="btn btn-xs btn-primary">
+                                                                <i class="glyphicon glyphicon-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="course-time-list">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <div class="form-group course-restriction-grade">
+                                                    <label for="restriction-grade">年级限制</label>
+                                                    <input type="text" class="form-control restriction-grade tokenfield-input" value="" />
+                                                </div>
+                                                <div class="form-group course-restriction-major">
+                                                    <label for="restriction-major">专业限制</label>
+                                                    <input type="text" class="form-control restriction-major tokenfield-input" value="" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary confirm-new-course">申请</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    </div>
                                 </div>
-                                <div class="form-group course-restriction-grade">
-                                    <label for="restriction-grade">年级限制</label>
-                                    <input type="text" class="form-control restriction-grade" value="" />
-                                </div>
-                                <div class="form-group course-restriction-major">
-                                    <label for="restriction-major">专业限制</label>
-                                    <input type="text" class="form-control restriction-major" value="" />
-                                </div>
-
-                                <button class="btn btn-primary apply-btn">申请</button>
-                            </form>
+                            </div>
                         </div>
+                        <table class="teacher-pending-courses-table" data-search="true" data-pagination="true"></table>
+                        
                     </div>
-                    <div role="tabpanel" class="tab-pane" id="getteachercourse">
-                        <table class="teacher-courses-table" data-search="true" data-pagination="true"></table>
+                    <div role="tabpanel" class="tab-pane" id="teacherpassedcourses">
+                        <table class="teacher-passed-courses-table" data-search="true" data-pagination="true"></table>
 
                         <div class="modal fade course-students-modal" tabindex="-1" role="dialog" style="display: none;">
                             <div class="modal-dialog modal-lg">
