@@ -320,7 +320,6 @@ define(function(require, exports, module){
         if (debug) {
             return this.fake({
                 "updateDate": "1464521046000",
-                "courseName": "小学语文",
                 "courseSize": "3",
                 "teacherNo": "",
                 "courseRestrictionGrade": "1,2",
@@ -620,7 +619,7 @@ define(function(require, exports, module){
         if (debug) {
             return this.fake([
                 {
-                    "id": 401,
+                    "courseId": 401,
                     "studentCourseId": 1305,
                     "courseRestrictionGrade": "1,2,4",
                     "coursePeriod": 64,
@@ -658,7 +657,7 @@ define(function(require, exports, module){
                     "courseGrade": "100"
                 },
                 {
-                    "id": 1201,
+                    "courseId": 1201,
                     "studentCourseId": 1306,
                     "courseRestrictionGrade": "1,2,4",
                     "coursePeriod": 64,

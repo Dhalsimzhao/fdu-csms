@@ -15,6 +15,8 @@ define(function(require, exports, module) {
                 $('.changepwd-container').append(this.$el);
                 this.hasRendered = true;
             }
+            var $e = this.$('.login-code');
+            $e.attr('src', $e.attr('src') + '?' + Math.random());
         },
 
         afterRender: function() {
@@ -69,6 +71,7 @@ define(function(require, exports, module) {
             }
             api.changepwd(data).then(function() {
                 alert('密码修改成功');
+                appRouter.goto(xk.role);
             });
         },
 

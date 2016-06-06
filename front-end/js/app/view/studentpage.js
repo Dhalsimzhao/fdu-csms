@@ -43,6 +43,18 @@ define(function(require, exports, module) {
                             ;
                     }
                 });
+
+                $(window).resize(function() {
+                    if (self.stuUnchoosedCoursesTable) {
+                        self.stuUnchoosedCoursesTable.bootstrapTable('resetView');
+                    }
+                    if (self.stuChoosedCoursesTable) {
+                        self.stuChoosedCoursesTable.bootstrapTable('resetView');
+                    }
+                    if (self.stuCourseTable) {
+                        self.stuCourseTable.bootstrapTable('resetView');
+                    }
+                })
             }
         },
 
@@ -219,13 +231,15 @@ define(function(require, exports, module) {
                 },  {
                     field: 'coursePeriod',
                     title: '学时'
-                }, {
-                    field: 'courseRestrictionGrade',
-                    title: '年级限制'
-                }, {
-                    field: 'courseRestrictionMajor',
-                    title: '专业限制'
-                }, {
+                }, 
+                // {
+                //     field: 'courseRestrictionGrade',
+                //     title: '年级限制'
+                // }, {
+                //     field: 'courseRestrictionMajor',
+                //     title: '专业限制'
+                // }, 
+                {
                     field: 'evaluationGrade',
                     title: '评教结果',
                     formatter: function(value, row, index) {
@@ -299,7 +313,7 @@ define(function(require, exports, module) {
                 _.each(tableOptions.columns, function(column){
                     data[column.field] = courses[i][column.field];
                 });
-                data.courseId = courses[i]['id'];
+                data.courseId = courses[i]['courseId'];
                 data.studentCourseId = courses[i]['studentCourseId'];
                 tableOptions.data.push(data);
             }
@@ -307,12 +321,12 @@ define(function(require, exports, module) {
             this.stuChoosedCoursesTable = $table.bootstrapTable(tableOptions);
         },
 
-        chooseCourse: function () {
-            return api.chooseCourse();
+        chooseCourse: function (data) {
+            return api.chooseCourse(data);
         },
 
-        cancleCourse: function () {
-            return api.cancleCourse();
+        cancleCourse: function (data) {
+            return api.cancleCourse(data);
         },
 
         genSchedule: function () {

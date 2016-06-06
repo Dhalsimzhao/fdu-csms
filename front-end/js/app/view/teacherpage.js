@@ -40,6 +40,18 @@ define(function(require, exports, module) {
                             ;
                     }
                 });
+
+                $(window).resize(function() {
+                    if (self.teacherPendingCourseTable) {
+                        self.teacherPendingCourseTable.bootstrapTable('resetView');
+                    }
+                    if (self.teacherPassedCourseTable) {
+                        self.teacherPassedCourseTable.bootstrapTable('resetView');
+                    }
+                    if (self.courseStudensTable) {
+                        self.courseStudensTable.bootstrapTable('resetView');
+                    }
+                });
             }
         },
 
@@ -84,10 +96,9 @@ define(function(require, exports, module) {
                     if (times.length === 1) {
                         alert('至少保留一个时间！');
                     } else {
-                        $e.closest('.course-time-picker-template').remove();
+                        $e.closest('.course-time').remove();
                     }
                 });
-
                 
                 this._initedNewCourseModal = true;
             }
@@ -173,6 +184,9 @@ define(function(require, exports, module) {
                     field: 'courseSize',
                     title: '人数上限'
                 }, {
+                    field: 'courseEnrollment',
+                    title: '已选人数'
+                }, {
                     field: 'courseRestrictionGrade',
                     title: '年级限制'
                 }, {
@@ -184,12 +198,6 @@ define(function(require, exports, module) {
                 }, {
                     field: 'coursePeriod',
                     title: '学时'
-                }, {
-                    field: 'courseStatus',
-                    title: '审核状态'
-                }, {
-                    field: 'courseEnrollment',
-                    title: '已选人数'
                 }, {
                     field: 'applyTime',
                     title: '上课时间',
@@ -383,6 +391,7 @@ define(function(require, exports, module) {
             console.log(data);
             api.newCourse(data).then(function (newCourse) {
                 self.$('.new-course-modal').modal('hide');
+                newCourse.courseName = newCourse.name;
                 self.teacherPendingCourseTable.bootstrapTable('prepend', newCourse);
             });
         },

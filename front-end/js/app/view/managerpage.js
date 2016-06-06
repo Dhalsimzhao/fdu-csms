@@ -38,6 +38,30 @@ define(function(require, exports, module) {
                             ;
                     }
                 });
+
+                $(window).resize(function() {
+                    if (self.coursePassTable) {
+                        self.coursePassTable.bootstrapTable('resetView');
+                    }
+                    if (self.roomAssignTable) {
+                        self.roomAssignTable.bootstrapTable('resetView');
+                    }
+                    if (self.courseModifyTable) {
+                        self.courseModifyTable.bootstrapTable('resetView');
+                    }
+                    if (self.allCourseTable) {
+                        self.allCourseTable.bootstrapTable('resetView');
+                    }
+                    if (self.courseStudensTable) {
+                        self.courseStudensTable.bootstrapTable('resetView');
+                    }
+                    if (self.allStudensTable) {
+                        self.allStudensTable.bootstrapTable('resetView');
+                    }
+                    if (self.studentCoursesTable) {
+                        self.studentCoursesTable.bootstrapTable('resetView');
+                    }
+                });
             }
         },
         show: function() {
@@ -881,7 +905,7 @@ define(function(require, exports, module) {
                 grade: $modal.find('.user-grade input').val(),
                 major: $modal.find('.user-major select').val(),
             };
-            api.newStudent().then(function (student) {
+            api.newStudent(data).then(function (student) {
                 self.$('.new-student-modal').modal('hide');
                 var newStudent = {
                     "studentPassword": student.password,

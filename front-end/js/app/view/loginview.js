@@ -15,6 +15,9 @@ define(function(require, exports, module) {
                 $('.login-container').append(this.$el);
                 this.hasRendered = true;
             }
+            this.$('input').val('');
+            var $e = this.$('.login-code');
+            $e.attr('src', $e.attr('src') + '?' + Math.random());
         },
 
         afterRender: function() {
