@@ -200,6 +200,7 @@ define(function(require, exports, module) {
             }
 
             this.stuUnchoosedCoursesTable = $table.bootstrapTable(tableOptions);
+            this.stuUnchoosedCoursesTable.bootstrapTable('resetView');
         },
 
         initChoosedCoursesTable: function (courses) {
@@ -319,6 +320,7 @@ define(function(require, exports, module) {
             }
 
             this.stuChoosedCoursesTable = $table.bootstrapTable(tableOptions);
+            this.stuChoosedCoursesTable.bootstrapTable('resetView');
         },
 
         chooseCourse: function (data) {
@@ -448,6 +450,7 @@ define(function(require, exports, module) {
             tableOptions.data = rows;
 
             this.stuCourseTable = $table.bootstrapTable(tableOptions);
+            this.stuCourseTable.bootstrapTable('resetView');
         }
     });
 

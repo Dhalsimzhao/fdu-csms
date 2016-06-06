@@ -902,7 +902,7 @@ define(function(require, exports, module) {
             var data = {
                 name: $modal.find('.user-name input').val(),
                 gender: $modal.find('.user-gender select').val(),
-                grade: $modal.find('.user-grade input').val(),
+                grade: $modal.find('.user-grade select').val(),
                 major: $modal.find('.user-major select').val(),
             };
             api.newStudent(data).then(function (student) {
