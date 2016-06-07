@@ -4,6 +4,7 @@ define(function(require, exports, module) {
         Backbone = require('backbone');
     
     var xk = require('biz/xk');
+    var util = require('util');
     var enums = require('biz/enums');
     var tokenfield = require('tokenfield');
     var bstable = require('bs-table-zh');
@@ -158,6 +159,12 @@ define(function(require, exports, module) {
                 },  {
                     field: 'coursePeriod',
                     title: '学时'
+                },  {
+                    field: 'courseTimeRoom',
+                    title: '上课时间&地点',
+                    formatter: function (value) {
+                        return util.parseTimeRoomsToHtml(value);
+                    }
                 }, {
                     field: 'courseRestrictionGrade',
                     title: '年级限制'
@@ -196,6 +203,7 @@ define(function(require, exports, module) {
                     data[column.field] = courses[i][column.field];
                 });
                 data.courseId = courses[i]['id'];
+                data.courseTimeRoom = _.pluck(courses[i]['roomDetails'], 'roomDetail');
                 tableOptions.data.push(data);
             }
 
@@ -232,15 +240,13 @@ define(function(require, exports, module) {
                 },  {
                     field: 'coursePeriod',
                     title: '学时'
-                }, 
-                // {
-                //     field: 'courseRestrictionGrade',
-                //     title: '年级限制'
-                // }, {
-                //     field: 'courseRestrictionMajor',
-                //     title: '专业限制'
-                // }, 
-                {
+                },  {
+                    field: 'courseTimeRoom',
+                    title: '上课时间&地点',
+                    formatter: function (value) {
+                        return util.parseTimeRoomsToHtml(value);
+                    }
+                }, {
                     field: 'evaluationGrade',
                     title: '评教结果',
                     formatter: function(value, row, index) {
@@ -315,6 +321,7 @@ define(function(require, exports, module) {
                     data[column.field] = courses[i][column.field];
                 });
                 data.courseId = courses[i]['courseId'];
+                data.courseTimeRoom = _.pluck(courses[i]['roomDetails'], 'roomDetail');
                 data.studentCourseId = courses[i]['studentCourseId'];
                 tableOptions.data.push(data);
             }
